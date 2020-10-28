@@ -1,0 +1,50 @@
+module au_top (
+    input clk,              // 100MHz clock
+    input rst_n,            // reset button (active low)
+    output led [8],         // 8 user controllable LEDs
+    input usb_rx,           // USB->Serial input
+    output usb_tx,          // USB->Serial output
+    output io_led [3][8],   // LEDs on IO Shield
+    output io_seg [8],      // 7-segment LEDs on IO Shield
+    output io_sel [4],      // Digit select on IO Shield
+    input io_button [5],    // 5 buttons on IO Shield
+    input io_dip [3][8]     // DIP switches on IO Shield
+  ) {
+  
+  sig rst;                  // reset signal
+  
+  .clk(clk) {
+    // The reset conditioner is used to synchronize the reset signal to the FPGA
+    // clock. This ensures the entire FPGA comes out of reset at the same time.
+    reset_conditioner reset_cond;
+    button_conditioner buttoncond[2];
+    edge_detector buttondetector[2](#RISE(1), #FALL(0));   //detect on rising edge only
+    .rst(rst) {
+      fsm_COMBINE fsmRUN;
+      multi_seven_seg seg;
+    }
+  }
+
+  always {
+    reset_cond.in = ~rst_n; // input raw inverted reset signal
+    rst = reset_cond.out;   // conditioned reset
+    
+    usb_tx = usb_rx;        // loop serial port
+    
+    led = 8h00;             // turn LEDs off
+    
+    buttoncond.in = io_button[4:3];
+    buttondetector.in = buttoncond.out;
+    
+    fsmRUN.button = buttondetector.out;
+    fsmRUN.in = io_dip;
+    
+    io_led[0] = fsmRUN.aluOut[7:0];
+    io_led[1] = fsmRUN.aluOut[15:8];
+    
+    seg.values = fsmRUN.displayOUT;
+    
+    io_seg = ~seg.seg; // connect segments to the driver
+    io_sel = ~seg.sel; // connect digit select to the driver
+  }
+}

@@ -1,0 +1,42 @@
+module seven_seg (
+    input char[8],
+    output segs[7]
+  ) {
+ 
+  always {
+    case (char) {
+      0: segs = 7b0111111; // 0, O
+      1: segs = 7b0000110; // 1
+      2: segs = 7b1011011; // 2
+      3: segs = 7b1001111; // 3
+      4: segs = 7b1100110; // 4
+      5: segs = 7b1101101; // 5
+      6: segs = 7b1111101; // 6
+      7: segs = 7b0000111; // 7
+      8: segs = 7b1111111; // 8, B
+      9: segs = 7b1100111; // 9
+      10: segs = 7b1110011; // P    
+      11: segs = 7b1110111; // A
+      12: segs = 7b1101101; // S
+      13: segs = 7b1110001; // F
+      14: segs = 7b0000110; // I
+      15: segs = 7b0111000; // L
+      16: segs = 7b1111100; // b
+      17: segs = 7b0111110; // U
+      18: segs = 7b1111000; // T
+      default: segs = 7b0000000;
+    }
+  }
+}
+
+// Copy and pass what you need to print.
+/*
+seg.values = {8ha, 8hb, 8hc, 8hc};  // 'PASS' 
+seg.values = {8hd, 8hb, 8he, 8hf};  // 'FAIL' 
+seg.values = {8hb, 8h11, 8h12, 8h0};  // 'AUTO' 
+seg.values = {8haa, 8haa, 8haa, 8hb};  // '__A'
+seg.values = {8haa, 8haa, 8haa, 8h10};  // '__b'
+seg.values = {8h0, 8h0, 8h0, 8h0};  // '0000'
+seg.values = {8haa,8haa,8haa,8haa}; // '____' 
+seg.values = {8haa, 8haa, 8h0, 8ha}; // '__op'
+*/

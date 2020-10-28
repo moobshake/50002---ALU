@@ -1,0 +1,13 @@
+module fsm_AUTO (
+    input clk,  // clock
+    input rst,  // reset
+    input button[2],
+    output aluOut[16], // alu output. to be shown in the io_leds
+    output displayOUT[4][8]
+  ) {
+
+  always {
+    aluOut = 16b1111111111111111;
+    displayOUT = {8hb, 8h11, 8h12, 8h0};
+  }
+}

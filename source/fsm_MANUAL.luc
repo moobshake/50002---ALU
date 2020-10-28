@@ -1,0 +1,138 @@
+module fsm_MANUAL (
+    input clk,  // clock
+    input rst,  // reset
+    input button[2],
+    input in [3][8], // get the input from the dip switch
+    output aluOut[16], // alu output. to be shown in the io_leds
+    output displayOUT[4][8]
+  ) {
+  
+  .clk(clk){
+    .rst(rst) {
+      dff first[16](#INIT(0)); // store 16 bit input a
+      dff second[16](#INIT(0)); // store 16 bit input b
+      dff opcode[6](#INIT(0)); // store 6 bit opcode
+      dff result[16](#INIT(0)); // store 16 bit for output on led
+      dff z[1](#INIT(0)); // store 1 bit z
+      dff v[1](#INIT(0)); // store 1 bit v
+      dff n[1](#INIT(0)); // store 1 bit n
+      dff display[4][8]; // store what to display on 7 segment displays
+    }
+    fsm brain = {FIRSTINPUT, SECONDINPUT, OPCODE, RESULT, AUTO};
+  }
+  
+  alu16bit alu; // call the alu.luc
+  
+  always {
+    // the standard output of all the DFF
+    alu.a = first.q;
+    alu.b = second.q;
+    alu.alufn = opcode.q;
+    result.d = alu.out;
+    aluOut = result.q;
+    z.d = alu.z;
+    v.d = alu.v;
+    n.d = alu.n;
+    displayOUT = display.q;
+    
+    case (brain.q) {
+      brain.AUTO:
+        if (button[0]) {brain.d = brain.FIRSTINPUT;} 
+        else {brain.d = brain.AUTO;}
+        
+      brain.FIRSTINPUT:
+        if (button[1]) {
+          first.d[7:0] = in[0]; // dip switch bank 0: first 8 bits
+          first.d[15:8] = in[1]; // dip switch bank 1: second 8 bits
+          brain.d = brain.SECONDINPUT; // change state
+        }
+        else {
+          display.d = {8haa, 8haa, 8haa, 8hb};  // '__A'
+          brain.d = brain.FIRSTINPUT;
+        }
+        if (button[0]) { // if change to AUTO_MODE. only can do it here in FIRSTINPUT State
+          // reset output
+          //display.d = {8hb, 8h11, 8h12, 8h0}; // 'AUtO'
+          first.d[15:0] = 0;
+          second.d[15:0] = 0;
+          opcode.d[5:0] = 0;
+          z.d = 0;
+          v.d = 0;
+          n.d = 0;
+          brain.d = brain.AUTO;
+        }
+    
+      brain.SECONDINPUT:
+        if (button[1]) {
+          second.d[7:0] = in[0];
+          second.d[15:8] = in[1];
+          brain.d = brain.OPCODE;
+        }
+        else {
+          display.d = {8haa, 8haa, 8haa, 8h10};  // '__b'
+          brain.d = brain.SECONDINPUT;
+        }
+        if (button[0]) { // if change to AUTO_MODE. only can do it here in FIRSTINPUT State
+          // reset output
+          //display.d = {8hb, 8h11, 8h12, 8h0}; // 'AUtO'
+          first.d[15:0] = 0;
+          second.d[15:0] = 0;
+          opcode.d[5:0] = 0;
+          z.d = 0;
+          v.d = 0;
+          n.d = 0;
+          brain.d = brain.AUTO;
+        }
+
+      brain.OPCODE:
+        if (button[1]) {
+          opcode.d = in[2][5:0];
+          brain.d = brain.RESULT;
+        }
+        else {
+          display.d = {8haa, 8haa, 8h0, 8ha}; // '__op'
+          brain.d = brain.OPCODE;
+        }
+        if (button[0]) { // if change to AUTO_MODE. only can do it here in FIRSTINPUT State
+          // reset output
+          //display.d = {8hb, 8h11, 8h12, 8h0}; // 'AUtO'
+          first.d[15:0] = 0;
+          second.d[15:0] = 0;
+          opcode.d[5:0] = 0;
+          z.d = 0;
+          v.d = 0;
+          n.d = 0;
+          brain.d = brain.AUTO;
+        }
+    
+      brain.RESULT:
+        if (button[1]) {
+          first.d[15:0] = 0;
+          second.d[15:0] = 0;
+          opcode.d[5:0] = 0;
+          z.d = 0;
+          v.d = 0;
+          n.d = 0;
+          brain.d = brain.FIRSTINPUT;
+        }
+        else {
+          display.d[3] = 8haa;
+          display.d[2] = z.q;
+          display.d[1] = v.q;
+          display.d[0] = n.q;
+          brain.d = brain.RESULT;
+        }
+        if (button[0]) { // if change to AUTO_MODE. only can do it here in FIRSTINPUT State
+          // reset output
+          //display.d = {8hb, 8h11, 8h12, 8h0}; // 'AUtO'
+          first.d[15:0] = 0;
+          second.d[15:0] = 0;
+          opcode.d[5:0] = 0;
+          z.d = 0;
+          v.d = 0;
+          n.d = 0;
+          brain.d = brain.AUTO;
+        }
+    }
+  }
+}
