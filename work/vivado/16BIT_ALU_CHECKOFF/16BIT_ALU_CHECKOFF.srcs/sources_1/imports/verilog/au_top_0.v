@@ -56,6 +56,7 @@ module au_top_0 (
   endgenerate
   wire [16-1:0] M_fsmRUN_aluOut;
   wire [32-1:0] M_fsmRUN_displayOUT;
+  wire [6-1:0] M_fsmRUN_opOUT;
   reg [2-1:0] M_fsmRUN_button;
   reg [24-1:0] M_fsmRUN_in;
   fsm_COMBINE_4 fsmRUN (
@@ -64,7 +65,8 @@ module au_top_0 (
     .button(M_fsmRUN_button),
     .in(M_fsmRUN_in),
     .aluOut(M_fsmRUN_aluOut),
-    .displayOUT(M_fsmRUN_displayOUT)
+    .displayOUT(M_fsmRUN_displayOUT),
+    .opOUT(M_fsmRUN_opOUT)
   );
   wire [7-1:0] M_seg_seg;
   wire [4-1:0] M_seg_sel;
@@ -88,6 +90,7 @@ module au_top_0 (
     M_fsmRUN_in = io_dip;
     io_led[0+7-:8] = M_fsmRUN_aluOut[0+7-:8];
     io_led[8+7-:8] = M_fsmRUN_aluOut[8+7-:8];
+    io_led[16+7-:8] = M_fsmRUN_opOUT;
     M_seg_values = M_fsmRUN_displayOUT;
     io_seg = ~M_seg_seg;
     io_sel = ~M_seg_sel;

@@ -4,7 +4,8 @@ module fsm_MANUAL (
     input button[2],
     input in [3][8], // get the input from the dip switch
     output aluOut[16], // alu output. to be shown in the io_leds
-    output displayOUT[4][8]
+    output displayOUT[4][8],
+    output opOUT[6]
   ) {
   
   .clk(clk){
@@ -28,12 +29,12 @@ module fsm_MANUAL (
     alu.a = first.q;
     alu.b = second.q;
     alu.alufn = opcode.q;
-    result.d = alu.out;
     aluOut = result.q;
     z.d = alu.z;
     v.d = alu.v;
     n.d = alu.n;
     displayOUT = display.q;
+    opOUT = opcode.q;
     
     case (brain.q) {
       brain.AUTO:
@@ -46,13 +47,8 @@ module fsm_MANUAL (
           first.d[15:8] = in[1]; // dip switch bank 1: second 8 bits
           brain.d = brain.SECONDINPUT; // change state
         }
-        else {
-          display.d = {8haa, 8haa, 8haa, 8hb};  // '__A'
-          brain.d = brain.FIRSTINPUT;
-        }
-        if (button[0]) { // if change to AUTO_MODE. only can do it here in FIRSTINPUT State
+        else if (button[0]) { // if change to AUTO_MODE. only can do it here in FIRSTINPUT State
           // reset output
-          //display.d = {8hb, 8h11, 8h12, 8h0}; // 'AUtO'
           first.d[15:0] = 0;
           second.d[15:0] = 0;
           opcode.d[5:0] = 0;
@@ -61,20 +57,21 @@ module fsm_MANUAL (
           n.d = 0;
           brain.d = brain.AUTO;
         }
-    
+        else {
+          result.d[7:0] = in[0]; // dip switch bank 0: first 8 bits
+          result.d[15:8] = in[1]; // dip switch bank 1: second 8 bits
+          display.d = {8he, 8h14, 8haa, 8hb};  // 'In_A'
+          brain.d = brain.FIRSTINPUT;
+        }
+
       brain.SECONDINPUT:
         if (button[1]) {
           second.d[7:0] = in[0];
           second.d[15:8] = in[1];
           brain.d = brain.OPCODE;
         }
-        else {
-          display.d = {8haa, 8haa, 8haa, 8h10};  // '__b'
-          brain.d = brain.SECONDINPUT;
-        }
-        if (button[0]) { // if change to AUTO_MODE. only can do it here in FIRSTINPUT State
+        else if (button[0]) { // if change to AUTO_MODE. only can do it here in FIRSTINPUT State
           // reset output
-          //display.d = {8hb, 8h11, 8h12, 8h0}; // 'AUtO'
           first.d[15:0] = 0;
           second.d[15:0] = 0;
           opcode.d[5:0] = 0;
@@ -82,20 +79,20 @@ module fsm_MANUAL (
           v.d = 0;
           n.d = 0;
           brain.d = brain.AUTO;
+        }
+        else {
+          result.d[7:0] = in[0]; // dip switch bank 0: first 8 bits
+          result.d[15:8] = in[1]; // dip switch bank 1: second 8 bits
+          display.d = {8he, 8h14, 8haa, 8h10};  // 'In_b'
+          brain.d = brain.SECONDINPUT;
         }
 
       brain.OPCODE:
         if (button[1]) {
-          opcode.d = in[2][5:0];
           brain.d = brain.RESULT;
         }
-        else {
-          display.d = {8haa, 8haa, 8h0, 8ha}; // '__op'
-          brain.d = brain.OPCODE;
-        }
-        if (button[0]) { // if change to AUTO_MODE. only can do it here in FIRSTINPUT State
+        else if (button[0]) { // if change to AUTO_MODE. only can do it here in FIRSTINPUT State
           // reset output
-          //display.d = {8hb, 8h11, 8h12, 8h0}; // 'AUtO'
           first.d[15:0] = 0;
           second.d[15:0] = 0;
           opcode.d[5:0] = 0;
@@ -104,6 +101,14 @@ module fsm_MANUAL (
           n.d = 0;
           brain.d = brain.AUTO;
         }
+        else {
+          result.d[7:0] = 0; // dip switch bank 0: first 8 bits
+          result.d[15:8] = 0; // dip switch bank 1: second 8 bits
+          opcode.d = in[2][5:0];
+          display.d = {8haa, 8haa, 8h0, 8ha}; // '__op'
+          brain.d = brain.OPCODE;
+        }
+        
     
       brain.RESULT:
         if (button[1]) {
@@ -115,16 +120,8 @@ module fsm_MANUAL (
           n.d = 0;
           brain.d = brain.FIRSTINPUT;
         }
-        else {
-          display.d[3] = 8haa;
-          display.d[2] = z.q;
-          display.d[1] = v.q;
-          display.d[0] = n.q;
-          brain.d = brain.RESULT;
-        }
-        if (button[0]) { // if change to AUTO_MODE. only can do it here in FIRSTINPUT State
+        else if (button[0]) { // if change to AUTO_MODE. only can do it here in FIRSTINPUT State
           // reset output
-          //display.d = {8hb, 8h11, 8h12, 8h0}; // 'AUtO'
           first.d[15:0] = 0;
           second.d[15:0] = 0;
           opcode.d[5:0] = 0;
@@ -132,6 +129,14 @@ module fsm_MANUAL (
           v.d = 0;
           n.d = 0;
           brain.d = brain.AUTO;
+        }
+        else {
+          display.d[3] = 8haa;
+          display.d[2] = z.q;
+          display.d[1] = v.q;
+          display.d[0] = n.q;
+          result.d = alu.out;
+          brain.d = brain.RESULT;
         }
     }
   }

@@ -10,7 +10,8 @@ module fsm_MANUAL_7 (
     input [1:0] button,
     input [23:0] in,
     output reg [15:0] aluOut,
-    output reg [31:0] displayOUT
+    output reg [31:0] displayOUT,
+    output reg [5:0] opOUT
   );
   
   
@@ -62,12 +63,12 @@ module fsm_MANUAL_7 (
     M_alu_a = M_first_q;
     M_alu_b = M_second_q;
     M_alu_alufn = M_opcode_q;
-    M_result_d = M_alu_out;
     aluOut = M_result_q;
     M_z_d = M_alu_z;
     M_v_d = M_alu_v;
     M_n_d = M_alu_n;
     displayOUT = M_display_q;
+    opOUT = M_opcode_q;
     
     case (M_brain_q)
       AUTO_brain: begin
@@ -83,17 +84,20 @@ module fsm_MANUAL_7 (
           M_first_d[8+7-:8] = in[8+7-:8];
           M_brain_d = SECONDINPUT_brain;
         end else begin
-          M_display_d = 32'haaaaaa0b;
-          M_brain_d = FIRSTINPUT_brain;
-        end
-        if (button[0+0-:1]) begin
-          M_first_d[0+15-:16] = 1'h0;
-          M_second_d[0+15-:16] = 1'h0;
-          M_opcode_d[0+5-:6] = 1'h0;
-          M_z_d = 1'h0;
-          M_v_d = 1'h0;
-          M_n_d = 1'h0;
-          M_brain_d = AUTO_brain;
+          if (button[0+0-:1]) begin
+            M_first_d[0+15-:16] = 1'h0;
+            M_second_d[0+15-:16] = 1'h0;
+            M_opcode_d[0+5-:6] = 1'h0;
+            M_z_d = 1'h0;
+            M_v_d = 1'h0;
+            M_n_d = 1'h0;
+            M_brain_d = AUTO_brain;
+          end else begin
+            M_result_d[0+7-:8] = in[0+7-:8];
+            M_result_d[8+7-:8] = in[8+7-:8];
+            M_display_d = 32'h0e14aa0b;
+            M_brain_d = FIRSTINPUT_brain;
+          end
         end
       end
       SECONDINPUT_brain: begin
@@ -102,35 +106,41 @@ module fsm_MANUAL_7 (
           M_second_d[8+7-:8] = in[8+7-:8];
           M_brain_d = OPCODE_brain;
         end else begin
-          M_display_d = 32'haaaaaa10;
-          M_brain_d = SECONDINPUT_brain;
-        end
-        if (button[0+0-:1]) begin
-          M_first_d[0+15-:16] = 1'h0;
-          M_second_d[0+15-:16] = 1'h0;
-          M_opcode_d[0+5-:6] = 1'h0;
-          M_z_d = 1'h0;
-          M_v_d = 1'h0;
-          M_n_d = 1'h0;
-          M_brain_d = AUTO_brain;
+          if (button[0+0-:1]) begin
+            M_first_d[0+15-:16] = 1'h0;
+            M_second_d[0+15-:16] = 1'h0;
+            M_opcode_d[0+5-:6] = 1'h0;
+            M_z_d = 1'h0;
+            M_v_d = 1'h0;
+            M_n_d = 1'h0;
+            M_brain_d = AUTO_brain;
+          end else begin
+            M_result_d[0+7-:8] = in[0+7-:8];
+            M_result_d[8+7-:8] = in[8+7-:8];
+            M_display_d = 32'h0e14aa10;
+            M_brain_d = SECONDINPUT_brain;
+          end
         end
       end
       OPCODE_brain: begin
         if (button[1+0-:1]) begin
-          M_opcode_d = in[16+0+5-:6];
           M_brain_d = RESULT_brain;
         end else begin
-          M_display_d = 32'haaaa000a;
-          M_brain_d = OPCODE_brain;
-        end
-        if (button[0+0-:1]) begin
-          M_first_d[0+15-:16] = 1'h0;
-          M_second_d[0+15-:16] = 1'h0;
-          M_opcode_d[0+5-:6] = 1'h0;
-          M_z_d = 1'h0;
-          M_v_d = 1'h0;
-          M_n_d = 1'h0;
-          M_brain_d = AUTO_brain;
+          if (button[0+0-:1]) begin
+            M_first_d[0+15-:16] = 1'h0;
+            M_second_d[0+15-:16] = 1'h0;
+            M_opcode_d[0+5-:6] = 1'h0;
+            M_z_d = 1'h0;
+            M_v_d = 1'h0;
+            M_n_d = 1'h0;
+            M_brain_d = AUTO_brain;
+          end else begin
+            M_result_d[0+7-:8] = 1'h0;
+            M_result_d[8+7-:8] = 1'h0;
+            M_opcode_d = in[16+0+5-:6];
+            M_display_d = 32'haaaa000a;
+            M_brain_d = OPCODE_brain;
+          end
         end
       end
       RESULT_brain: begin
@@ -143,20 +153,22 @@ module fsm_MANUAL_7 (
           M_n_d = 1'h0;
           M_brain_d = FIRSTINPUT_brain;
         end else begin
-          M_display_d[24+7-:8] = 8'haa;
-          M_display_d[16+7-:8] = M_z_q;
-          M_display_d[8+7-:8] = M_v_q;
-          M_display_d[0+7-:8] = M_n_q;
-          M_brain_d = RESULT_brain;
-        end
-        if (button[0+0-:1]) begin
-          M_first_d[0+15-:16] = 1'h0;
-          M_second_d[0+15-:16] = 1'h0;
-          M_opcode_d[0+5-:6] = 1'h0;
-          M_z_d = 1'h0;
-          M_v_d = 1'h0;
-          M_n_d = 1'h0;
-          M_brain_d = AUTO_brain;
+          if (button[0+0-:1]) begin
+            M_first_d[0+15-:16] = 1'h0;
+            M_second_d[0+15-:16] = 1'h0;
+            M_opcode_d[0+5-:6] = 1'h0;
+            M_z_d = 1'h0;
+            M_v_d = 1'h0;
+            M_n_d = 1'h0;
+            M_brain_d = AUTO_brain;
+          end else begin
+            M_display_d[24+7-:8] = 8'haa;
+            M_display_d[16+7-:8] = M_z_q;
+            M_display_d[8+7-:8] = M_v_q;
+            M_display_d[0+7-:8] = M_n_q;
+            M_result_d = M_alu_out;
+            M_brain_d = RESULT_brain;
+          end
         end
       end
     endcase

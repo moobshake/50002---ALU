@@ -23,7 +23,7 @@ module alu16bit_12 (
   reg [1-1:0] M_adder_alufn0;
   reg [16-1:0] M_adder_a;
   reg [16-1:0] M_adder_b;
-  adder16bit_13 adder (
+  adder16bit_14 adder (
     .alufn0(M_adder_alufn0),
     .a(M_adder_a),
     .b(M_adder_b),
@@ -37,7 +37,7 @@ module alu16bit_12 (
   reg [16-1:0] M_shifter_a;
   reg [16-1:0] M_shifter_b;
   reg [2-1:0] M_shifter_alufn10;
-  shifter16bit_14 shifter (
+  shifter16bit_15 shifter (
     .a(M_shifter_a),
     .b(M_shifter_b),
     .alufn10(M_shifter_alufn10),
@@ -49,7 +49,7 @@ module alu16bit_12 (
   reg [1-1:0] M_comparator_z;
   reg [1-1:0] M_comparator_v;
   reg [1-1:0] M_comparator_n;
-  compare16bit_15 comparator (
+  compare16bit_16 comparator (
     .alufn21(M_comparator_alufn21),
     .z(M_comparator_z),
     .v(M_comparator_v),
@@ -61,7 +61,7 @@ module alu16bit_12 (
   reg [16-1:0] M_bool_a;
   reg [16-1:0] M_bool_b;
   reg [4-1:0] M_bool_alufn30;
-  bool16bit_16 bool (
+  bool16bit_17 bool (
     .a(M_bool_a),
     .b(M_bool_b),
     .alufn30(M_bool_alufn30),

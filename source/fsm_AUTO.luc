@@ -3,11 +3,523 @@ module fsm_AUTO (
     input rst,  // reset
     input button[2],
     output aluOut[16], // alu output. to be shown in the io_leds
-    output displayOUT[4][8]
+    output displayOUT[4][8],
+    output opOUT[6],
+    input in [3][8] // get the input from the dip switch
   ) {
-
+  .clk(clk){
+    .rst(rst) {
+      dff first[16](#INIT(0)); // store 16 bit input a
+      dff second[16](#INIT(0)); // store 16 bit input b
+      dff opcode[6](#INIT(0)); // store 6 bit opcode
+      dff result[16](#INIT(0)); // store 16 bit for output on led
+      dff z[1](#INIT(0)); // store 1 bit z
+      dff v[1](#INIT(0)); // store 1 bit v
+      dff n[1](#INIT(0)); // store 1 bit n
+      dff display[4][8]; // store what to display on 7 segment displays
+    }
+    fsm brain = {MANUAL, IDLE, TESTAUTO, TESTAUTOINPUT};
+    fsm autoBrain = {ADD, SUB, AND, OR, XOR, ALDR, SHL, SHR, SRA, CMPEQ, CMPLT, CMPLE};
+    fsm autoInputBrain = {INPUTA, INPUTB, RUN};
+  }
+  
+  alu16bit alu; // call the alu.luc
+  
+  // list of test variables // can use hexdecimals also
+  const ADDOP = 6b000000;
+  const ADDTESTA = 16b0000000000000001;
+  const ADDTESTB = 16b0000000000000001;
+  const SUBOP = 6b000001;
+  const SUBTESTA = 16b0000000000000011;
+  const SUBTESTB = 16b0000000000000010;
+  const ANDOP = 6b011000;
+  const ANDTESTA = 16b0000001000000011;
+  const ANDTESTB = 16b0000001000000001;
+  const OROP = 6b011110;
+  const ORTESTA = 16b0000000000000011;
+  const ORTESTB = 16b0000000000001010;
+  const XOROP = 6b010110;
+  const XORTESTA = 16b0000000000000011;
+  const XORTESTB = 16b0000000000001100;
+  const ALDROP = 6b011010;
+  const ALDRTESTA = 16b0000000000000011;
+  const ALDRTESTB = 16b0000000000000010;
+  const SHLOP = 6b100000;
+  const SHLTESTA = 16b0000001000000011;
+  const SHLTESTB = 16b0000001000000111;
+  const SHROP = 6b100001;
+  const SHRTESTA = 16b1000000000000000;
+  const SHRTESTB = 16b0000000000000001;
+  const SRAOP = 6b100011;
+  const SRATESTA = 16b0000000000001100;
+  const SRATESTB = 16b0000000000000001;
+  const CMPEQOP = 6b110011;
+  const CMPEQTESTA = 16b0000001000000011;
+  const CMPEQTESTB = 16b0000001000000111;
+  const CMPLTOP = 6b110101;
+  const CMPLTTESTA = 16b1000000000000000;
+  const CMPLTTESTB = 16b0000000000000001;
+  const CMPLEOP = 6b110111;
+  const CMPLETESTA = 16b0000000000001100;
+  const CMPLETESTB = 16b0000000000000001;
+  
+  const SLOWCLOCK_SIZE = 28;
+  counter slowClock(#SIZE(SLOWCLOCK_SIZE), .clk(clk), .rst(rst));
+  edge_detector slowClockEdge(#RISE(1), #FALL(0), .clk(clk));
+  
   always {
-    aluOut = 16b1111111111111111;
-    displayOUT = {8hb, 8h11, 8h12, 8h0};
+    slowClockEdge.in = slowClock.value[SLOWCLOCK_SIZE-1];
+    aluOut = result.q;
+    displayOUT = display.q;
+    opOUT = opcode.q;
+    alu.a = first.q;
+    alu.b = second.q;
+    alu.alufn = opcode.q;
+    aluOut = result.q;
+    z.d = alu.z;
+    v.d = alu.v;
+    n.d = alu.n;
+
+    case(brain.q) {
+      brain.MANUAL:
+        if (button[0]) { // transition from manual to auto
+          brain.d = brain.IDLE;
+        } 
+        else {
+          brain.d = brain.MANUAL;
+        }
+      brain.IDLE:
+        if (button[1] && in[2][7]) { // start the auto testing
+          brain.d = brain.TESTAUTOINPUT;
+        } 
+        else if (button[1]) {
+          brain.d = brain.TESTAUTO;
+        }
+        else if (button[0]) { // goes back to manual mode
+          brain.d = brain.MANUAL; 
+        } 
+        else {
+          display.d = {8hb, 8h11, 8h12, 8h0}; // 'AUTO'
+          result.d = 16b1111111111111111;
+          opcode.d = 6b111111;
+          brain.d = brain.IDLE;
+        }
+        
+      brain.TESTAUTOINPUT:
+        if (button[1] && in[2][7] == 0) { // restart the auto mode
+          brain.d = brain.IDLE;
+        } 
+        else if (button[0]) { // goes back to manual mode
+          brain.d = brain.MANUAL; 
+        } 
+        else {
+          brain.d = brain.TESTAUTOINPUT;
+          case (autoInputBrain.q) {
+            autoInputBrain.INPUTA:
+              if (button[1]) {
+                first.d[7:0] = in[0]; // dip switch bank 0: first 8 bits
+                first.d[15:8] = in[1]; // dip switch bank 1: second 8 bits
+                autoInputBrain.d = autoInputBrain.INPUTB;
+              } 
+              else {
+                result.d[7:0] = in[0]; // dip switch bank 0: first 8 bits
+                result.d[15:8] = in[1]; // dip switch bank 1: second 8 bits
+                display.d = {8he, 8h14, 8haa, 8hb};  // 'In_A'
+                autoInputBrain.d = autoInputBrain.INPUTA;
+              }
+            autoInputBrain.INPUTB:
+              if (button[1]) {
+                second.d[7:0] = in[0];
+                second.d[15:8] = in[1];
+                autoInputBrain.d = autoInputBrain.RUN;
+              }
+              else {
+                result.d[7:0] = in[0]; // dip switch bank 0: first 8 bits
+                result.d[15:8] = in[1]; // dip switch bank 1: second 8 bits
+                display.d = {8he, 8h14, 8haa, 8h10};  // 'In_b'
+                autoInputBrain.d = autoInputBrain.INPUTB;
+              }
+            autoInputBrain.RUN:
+              if (button[1]) {
+                autoBrain.d = autoBrain.ADD;
+                first.d[15:0] = 0;
+                second.d[15:0] = 0;
+                opcode.d[5:0] = 0;
+                z.d = 0;
+                v.d = 0;
+                n.d = 0;
+                autoInputBrain.d = autoInputBrain.INPUTA;
+              }
+              else {
+                autoInputBrain.d = autoInputBrain.RUN;
+                case (autoBrain.q) {
+                  autoBrain.ADD:
+                    if (slowClockEdge.out == b1) {
+                      autoBrain.d = autoBrain.SUB;
+                    }
+                    else {
+                      display.d[3] = 8ha;
+                      display.d[2] = z.q;
+                      display.d[1] = v.q;
+                      display.d[0] = n.q;
+                      opcode.d = ADDOP;
+                      result.d = alu.out;
+                      autoBrain.d = autoBrain.ADD;
+                    }
+                  autoBrain.SUB:
+                    if (slowClockEdge.out == b1) {
+                      autoBrain.d = autoBrain.AND;
+                    }
+                    else {
+                      display.d[3] = 8ha;
+                      display.d[2] = z.q;
+                      display.d[1] = v.q;
+                      display.d[0] = n.q;
+                      opcode.d = SUBOP;
+                      result.d = alu.out;
+                      autoBrain.d = autoBrain.SUB;
+                    }
+                  autoBrain.AND:
+                    if (slowClockEdge.out == b1) {
+                      autoBrain.d = autoBrain.OR;
+                    }
+                    else {
+                      display.d[3] = 8ha;
+                      display.d[2] = z.q;
+                      display.d[1] = v.q;
+                      display.d[0] = n.q;
+                      opcode.d = ANDOP;
+                      result.d = alu.out;
+                      autoBrain.d = autoBrain.AND;
+                    }
+                  autoBrain.OR:
+                    if (slowClockEdge.out == b1) {
+                      autoBrain.d = autoBrain.XOR;
+                    }
+                    else {
+                      display.d[3] = 8ha;
+                      display.d[2] = z.q;
+                      display.d[1] = v.q;
+                      display.d[0] = n.q;
+                      opcode.d = OROP;
+                      result.d = alu.out;
+                      autoBrain.d = autoBrain.OR;
+                    }
+                  autoBrain.XOR:
+                    if (slowClockEdge.out == b1) {
+                      autoBrain.d = autoBrain.ALDR;
+                    }
+                    else {
+                      display.d[3] = 8ha;
+                      display.d[2] = z.q;
+                      display.d[1] = v.q;
+                      display.d[0] = n.q;
+                      opcode.d = XOROP;
+                      result.d = alu.out;
+                      autoBrain.d = autoBrain.XOR;
+                    }
+                  autoBrain.ALDR:
+                    if (slowClockEdge.out == b1) {
+                      autoBrain.d = autoBrain.SHL;
+                    }
+                    else {
+                      display.d[3] = 8ha;
+                      display.d[2] = z.q;
+                      display.d[1] = v.q;
+                      display.d[0] = n.q;
+                      opcode.d = ALDROP;
+                      result.d = alu.out;
+                      autoBrain.d = autoBrain.ALDR;
+                    }
+                  autoBrain.SHL:
+                    if (slowClockEdge.out == b1) {
+                      autoBrain.d = autoBrain.SHR;
+                    }
+                    else {
+                      display.d[3] = 8ha;
+                      display.d[2] = z.q;
+                      display.d[1] = v.q;
+                      display.d[0] = n.q;
+                      opcode.d = SHLOP;
+                      result.d = alu.out;
+                      autoBrain.d = autoBrain.SHL;
+                    }
+                  autoBrain.SHR:
+                    if (slowClockEdge.out == b1) {
+                      autoBrain.d = autoBrain.SRA;
+                    }
+                    else {
+                      display.d[3] = 8ha;
+                      display.d[2] = z.q;
+                      display.d[1] = v.q;
+                      display.d[0] = n.q;
+                      opcode.d = SHROP;
+                      result.d = alu.out;
+                      autoBrain.d = autoBrain.SHR;
+                    }
+                  autoBrain.SRA:
+                    if (slowClockEdge.out == b1) {
+                      autoBrain.d = autoBrain.CMPEQ;
+                    }
+                    else {
+                      display.d[3] = 8ha;
+                      display.d[2] = z.q;
+                      display.d[1] = v.q;
+                      display.d[0] = n.q;
+                      opcode.d = SRAOP;
+                      result.d = alu.out;
+                      autoBrain.d = autoBrain.SRA;
+                    }
+                  autoBrain.CMPEQ:
+                    if (slowClockEdge.out == b1) {
+                      autoBrain.d = autoBrain.CMPLT;
+                    }
+                    else {
+                      display.d[3] = 8ha;
+                      display.d[2] = z.q;
+                      display.d[1] = v.q;
+                      display.d[0] = n.q;
+                      opcode.d = CMPEQOP;
+                      result.d = alu.out;
+                      autoBrain.d = autoBrain.CMPEQ;
+                    }
+                  autoBrain.CMPLT:
+                    if (slowClockEdge.out == b1) {
+                      autoBrain.d = autoBrain.CMPLE;
+                    }
+                    else {
+                      display.d[3] = 8ha;
+                      display.d[2] = z.q;
+                      display.d[1] = v.q;
+                      display.d[0] = n.q;
+                      opcode.d = CMPLTOP;
+                      result.d = alu.out;
+                      autoBrain.d = autoBrain.CMPLT;
+                    }
+                  autoBrain.CMPLE:
+                    if (slowClockEdge.out == b1) {
+                      autoBrain.d = autoBrain.ADD;
+                    }
+                    else {
+                      display.d[3] = 8ha;
+                      display.d[2] = z.q;
+                      display.d[1] = v.q;
+                      display.d[0] = n.q;
+                      opcode.d = CMPLEOP;
+                      result.d = alu.out;
+                      autoBrain.d = autoBrain.CMPLE;
+                    }
+                }
+              }
+          }
+        }
+        
+        
+      brain.TESTAUTO:
+        if (button[1]) { // restart the auto mode
+          autoBrain.d = autoBrain.ADD;
+          brain.d = brain.IDLE;
+        } 
+        else if (button[0]) { // goes back to manual mode
+          autoBrain.d = autoBrain.ADD;
+          brain.d = brain.MANUAL; 
+        } 
+        else {
+          brain.d = brain.TESTAUTO;
+          case (autoBrain.q) {
+            autoBrain.ADD:
+              if (slowClockEdge.out == b1) {
+                autoBrain.d = autoBrain.SUB;
+              }
+              else {
+                display.d[3] = 8ha;
+                display.d[2] = z.q;
+                display.d[1] = v.q;
+                display.d[0] = n.q;
+                first.d = ADDTESTA;
+                second.d = ADDTESTB;
+                opcode.d = ADDOP;
+                result.d = alu.out;
+                autoBrain.d = autoBrain.ADD;
+              }
+            autoBrain.SUB:  
+              if (slowClockEdge.out == b1) {
+                autoBrain.d = autoBrain.AND;
+              }
+              else {
+                display.d[3] = 8ha;
+                display.d[2] = z.q;
+                display.d[1] = v.q;
+                display.d[0] = n.q;
+                first.d = SUBTESTA;
+                second.d = SUBTESTB;
+                opcode.d = SUBOP;
+                result.d = alu.out;
+                result.d = alu.out;
+                autoBrain.d = autoBrain.SUB;
+              }
+            autoBrain.AND:  
+              if (slowClockEdge.out == b1) {
+                autoBrain.d = autoBrain.OR;
+              }
+              else {
+                display.d[3] = 8ha;
+                display.d[2] = z.q;
+                display.d[1] = v.q;
+                display.d[0] = n.q;
+                first.d = ANDTESTA;
+                second.d = ANDTESTB;
+                opcode.d = ANDOP;
+                result.d = alu.out;
+                result.d = alu.out;
+                autoBrain.d = autoBrain.AND;
+              }
+            autoBrain.OR:  
+              if (slowClockEdge.out == b1) {
+                autoBrain.d = autoBrain.XOR;
+              }
+              else {
+                display.d[3] = 8ha;
+                display.d[2] = z.q;
+                display.d[1] = v.q;
+                display.d[0] = n.q;
+                first.d = ORTESTA;
+                second.d = ORTESTB;
+                opcode.d = OROP;
+                result.d = alu.out;
+                result.d = alu.out;
+                autoBrain.d = autoBrain.OR;
+              }
+            autoBrain.XOR:  
+              if (slowClockEdge.out == b1) {
+                autoBrain.d = autoBrain.ALDR;
+              }
+              else {
+                display.d[3] = 8ha;
+                display.d[2] = z.q;
+                display.d[1] = v.q;
+                display.d[0] = n.q;
+                first.d = XORTESTA;
+                second.d = XORTESTB;
+                opcode.d = XOROP;
+                result.d = alu.out;
+                result.d = alu.out;
+                autoBrain.d = autoBrain.XOR;
+              }
+            autoBrain.ALDR:  
+              if (slowClockEdge.out == b1) {
+                autoBrain.d = autoBrain.SHL;
+              }
+              else {
+                display.d[3] = 8ha;
+                display.d[2] = z.q;
+                display.d[1] = v.q;
+                display.d[0] = n.q;
+                first.d = ALDRTESTA;
+                second.d = ALDRTESTB;
+                opcode.d = ALDROP;
+                result.d = alu.out;
+                result.d = alu.out;
+                autoBrain.d = autoBrain.ALDR;
+              }
+            autoBrain.SHL:  
+              if (slowClockEdge.out == b1) {
+                autoBrain.d = autoBrain.SHR;
+              }
+              else {
+                display.d[3] = 8ha;
+                display.d[2] = z.q;
+                display.d[1] = v.q;
+                display.d[0] = n.q;
+                first.d = SHLTESTA;
+                second.d = SHLTESTB;
+                opcode.d = SHLOP;
+                result.d = alu.out;
+                result.d = alu.out;
+                autoBrain.d = autoBrain.SHL;
+              }
+            autoBrain.SHR:  
+              if (slowClockEdge.out == b1) {
+                autoBrain.d = autoBrain.SRA;
+              }
+              else {
+                display.d[3] = 8ha;
+                display.d[2] = z.q;
+                display.d[1] = v.q;
+                display.d[0] = n.q;
+                first.d = SHRTESTA;
+                second.d = SHRTESTB;
+                opcode.d = SHROP;
+                result.d = alu.out;
+                result.d = alu.out;
+                autoBrain.d = autoBrain.SHR;
+              }
+            autoBrain.SRA:  
+              if (slowClockEdge.out == b1) {
+                autoBrain.d = autoBrain.CMPEQ;
+              }
+              else {
+                display.d[3] = 8ha;
+                display.d[2] = z.q;
+                display.d[1] = v.q;
+                display.d[0] = n.q;
+                first.d = SRATESTA;
+                second.d = SRATESTB;
+                opcode.d = SRAOP;
+                result.d = alu.out;
+                result.d = alu.out;
+                autoBrain.d = autoBrain.SRA;
+              }
+            autoBrain.CMPEQ:  
+              if (slowClockEdge.out == b1) {
+                autoBrain.d = autoBrain.CMPLT;
+              }
+              else {
+                display.d[3] = 8ha;
+                display.d[2] = z.q;
+                display.d[1] = v.q;
+                display.d[0] = n.q;
+                first.d = CMPEQTESTA;
+                second.d = CMPEQTESTB;
+                opcode.d = CMPEQOP;
+                result.d = alu.out;
+                result.d = alu.out;
+                autoBrain.d = autoBrain.CMPEQ;
+              }
+            autoBrain.CMPLT:  
+              if (slowClockEdge.out == b1) {
+                autoBrain.d = autoBrain.CMPLE;
+              }
+              else {
+                display.d[3] = 8ha;
+                display.d[2] = z.q;
+                display.d[1] = v.q;
+                display.d[0] = n.q;
+                first.d = CMPLTTESTA;
+                second.d = CMPLTTESTB;
+                opcode.d = CMPLTOP;
+                result.d = alu.out;
+                result.d = alu.out;
+                autoBrain.d = autoBrain.CMPLT;
+              }
+            autoBrain.CMPLE:  
+              if (slowClockEdge.out == b1) {
+                autoBrain.d = autoBrain.ADD;
+              }
+              else {
+                display.d[3] = 8ha;
+                display.d[2] = z.q;
+                display.d[1] = v.q;
+                display.d[0] = n.q;
+                first.d = CMPLETESTA;
+                second.d = CMPLETESTB;
+                opcode.d = CMPLEOP;
+                result.d = alu.out;
+                result.d = alu.out;
+                autoBrain.d = autoBrain.CMPLE;
+              }
+          }
+        }
+    }
   }
 }

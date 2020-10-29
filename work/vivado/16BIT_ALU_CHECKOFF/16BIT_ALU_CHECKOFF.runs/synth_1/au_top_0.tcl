@@ -84,11 +84,12 @@ set_property ip_cache_permissions {read write} [current_project]
 OPTRACE "Creating in-memory project" END { }
 OPTRACE "Adding files" START { }
 read_verilog -library xil_defaultlib {
-  C:/Users/darry/Documents/alchitry/16BIT_ALU_CHECKOFF/work/vivado/16BIT_ALU_CHECKOFF/16BIT_ALU_CHECKOFF.srcs/sources_1/imports/verilog/adder16bit_13.v
+  C:/Users/darry/Documents/alchitry/16BIT_ALU_CHECKOFF/work/vivado/16BIT_ALU_CHECKOFF/16BIT_ALU_CHECKOFF.srcs/sources_1/imports/verilog/adder16bit_14.v
   C:/Users/darry/Documents/alchitry/16BIT_ALU_CHECKOFF/work/vivado/16BIT_ALU_CHECKOFF/16BIT_ALU_CHECKOFF.srcs/sources_1/imports/verilog/alu16bit_12.v
-  C:/Users/darry/Documents/alchitry/16BIT_ALU_CHECKOFF/work/vivado/16BIT_ALU_CHECKOFF/16BIT_ALU_CHECKOFF.srcs/sources_1/imports/verilog/bool16bit_16.v
+  C:/Users/darry/Documents/alchitry/16BIT_ALU_CHECKOFF/work/vivado/16BIT_ALU_CHECKOFF/16BIT_ALU_CHECKOFF.srcs/sources_1/imports/verilog/bool16bit_17.v
   C:/Users/darry/Documents/alchitry/16BIT_ALU_CHECKOFF/work/vivado/16BIT_ALU_CHECKOFF/16BIT_ALU_CHECKOFF.srcs/sources_1/imports/verilog/button_conditioner_2.v
-  C:/Users/darry/Documents/alchitry/16BIT_ALU_CHECKOFF/work/vivado/16BIT_ALU_CHECKOFF/16BIT_ALU_CHECKOFF.srcs/sources_1/imports/verilog/compare16bit_15.v
+  C:/Users/darry/Documents/alchitry/16BIT_ALU_CHECKOFF/work/vivado/16BIT_ALU_CHECKOFF/16BIT_ALU_CHECKOFF.srcs/sources_1/imports/verilog/compare16bit_16.v
+  C:/Users/darry/Documents/alchitry/16BIT_ALU_CHECKOFF/work/vivado/16BIT_ALU_CHECKOFF/16BIT_ALU_CHECKOFF.srcs/sources_1/imports/verilog/counter_13.v
   C:/Users/darry/Documents/alchitry/16BIT_ALU_CHECKOFF/work/vivado/16BIT_ALU_CHECKOFF/16BIT_ALU_CHECKOFF.srcs/sources_1/imports/verilog/counter_9.v
   C:/Users/darry/Documents/alchitry/16BIT_ALU_CHECKOFF/work/vivado/16BIT_ALU_CHECKOFF/16BIT_ALU_CHECKOFF.srcs/sources_1/imports/verilog/decoder_11.v
   C:/Users/darry/Documents/alchitry/16BIT_ALU_CHECKOFF/work/vivado/16BIT_ALU_CHECKOFF/16BIT_ALU_CHECKOFF.srcs/sources_1/imports/verilog/edge_detector_3.v
@@ -99,7 +100,7 @@ read_verilog -library xil_defaultlib {
   C:/Users/darry/Documents/alchitry/16BIT_ALU_CHECKOFF/work/vivado/16BIT_ALU_CHECKOFF/16BIT_ALU_CHECKOFF.srcs/sources_1/imports/verilog/pipeline_6.v
   C:/Users/darry/Documents/alchitry/16BIT_ALU_CHECKOFF/work/vivado/16BIT_ALU_CHECKOFF/16BIT_ALU_CHECKOFF.srcs/sources_1/imports/verilog/reset_conditioner_1.v
   C:/Users/darry/Documents/alchitry/16BIT_ALU_CHECKOFF/work/vivado/16BIT_ALU_CHECKOFF/16BIT_ALU_CHECKOFF.srcs/sources_1/imports/verilog/seven_seg_10.v
-  C:/Users/darry/Documents/alchitry/16BIT_ALU_CHECKOFF/work/vivado/16BIT_ALU_CHECKOFF/16BIT_ALU_CHECKOFF.srcs/sources_1/imports/verilog/shifter16bit_14.v
+  C:/Users/darry/Documents/alchitry/16BIT_ALU_CHECKOFF/work/vivado/16BIT_ALU_CHECKOFF/16BIT_ALU_CHECKOFF.srcs/sources_1/imports/verilog/shifter16bit_15.v
   C:/Users/darry/Documents/alchitry/16BIT_ALU_CHECKOFF/work/vivado/16BIT_ALU_CHECKOFF/16BIT_ALU_CHECKOFF.srcs/sources_1/imports/verilog/au_top_0.v
 }
 OPTRACE "Adding files" END { }

@@ -4,7 +4,7 @@
    This is a temporary file and any changes made to it will be destroyed.
 */
 
-module shifter16bit_14 (
+module shifter16bit_15 (
     input [15:0] a,
     input [15:0] b,
     input [1:0] alufn10,

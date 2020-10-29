@@ -4,7 +4,7 @@
    This is a temporary file and any changes made to it will be destroyed.
 */
 
-module bool16bit_16 (
+module bool16bit_17 (
     input [15:0] a,
     input [15:0] b,
     input [3:0] alufn30,

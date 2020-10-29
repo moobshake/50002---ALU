@@ -4,7 +4,8 @@ module fsm_COMBINE (
     input button[2],
     input in [3][8], // get the input from the dip switch
     output aluOut[16], // alu output. to be shown in the io_leds
-    output displayOUT[4][8]
+    output displayOUT[4][8],
+    output opOUT[6]
   ) {
 
   .clk(clk){
@@ -13,6 +14,7 @@ module fsm_COMBINE (
       fsm_AUTO auto;
       dff show[16](#INIT(0)); // store the output 
       dff display[4][8]; // store what to display on 7 segment displays
+      dff opcode[6](#INIT(0)); // store 6 bit opcode
     }
     fsm brain = {MANUAL, AUTO};
   }
@@ -24,7 +26,8 @@ module fsm_COMBINE (
     auto.in = in;
     aluOut = show.q;
     displayOUT = display.q;
-
+    opOUT = opcode.q;
+    
     case (brain.q) {
       brain.MANUAL:
         if (button[0]) {
@@ -34,6 +37,7 @@ module fsm_COMBINE (
         else {
           show.d = manual.aluOut;
           display.d = manual.displayOUT;
+          opcode.d = manual.opOUT;
         }
       brain.AUTO:
         if (button[0]) {
@@ -42,6 +46,7 @@ module fsm_COMBINE (
         } else {
           show.d = auto.aluOut;
           display.d = auto.displayOUT;
+          opcode.d = auto.opOUT;
         }
     }
   }

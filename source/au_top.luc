@@ -33,16 +33,17 @@ module au_top (
     
     led = 8h00;             // turn LEDs off
     
-    buttoncond.in = io_button[4:3];
+    buttoncond.in = io_button[4:3]; // only use the left,3 and right,4 button
     buttondetector.in = buttoncond.out;
     
     fsmRUN.button = buttondetector.out;
     fsmRUN.in = io_dip;
     
-    io_led[0] = fsmRUN.aluOut[7:0];
-    io_led[1] = fsmRUN.aluOut[15:8];
+    io_led[0] = fsmRUN.aluOut[7:0]; // bit 8 to lsb
+    io_led[1] = fsmRUN.aluOut[15:8]; // msb to bit 9
+    io_led[2] = fsmRUN.opOUT; // only 6 bits
     
-    seg.values = fsmRUN.displayOUT;
+    seg.values = fsmRUN.displayOUT; // value to display at the 7 segment display
     
     io_seg = ~seg.seg; // connect segments to the driver
     io_sel = ~seg.sel; // connect digit select to the driver
