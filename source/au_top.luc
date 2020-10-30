@@ -1,3 +1,9 @@
+// Group 12-2
+// Tan Jing Heng Darryl - 1004152
+// Lau Yu Hui		- 1004410
+// Chua Jia Wei		- 1004369
+// Lim Xin Yi		- 1003664
+// Wesley Quek		- 1004316
 module au_top (
     input clk,              // 100MHz clock
     input rst_n,            // reset button (active low)
@@ -20,8 +26,8 @@ module au_top (
     button_conditioner buttoncond[2];
     edge_detector buttondetector[2](#RISE(1), #FALL(0));   //detect on rising edge only
     .rst(rst) {
-      fsm_COMBINE fsmRUN;
-      multi_seven_seg seg;
+      fsm_COMBINE fsmRUN; // connect clk and rst to main fsm
+      multi_seven_seg seg; // connect clk and rst to 7 segment modules
     }
   }
 
@@ -41,7 +47,8 @@ module au_top (
     
     io_led[0] = fsmRUN.aluOut[7:0]; // bit 8 to lsb
     io_led[1] = fsmRUN.aluOut[15:8]; // msb to bit 9
-    io_led[2] = fsmRUN.opOUT; // only 6 bits
+    io_led[2][5:0] = fsmRUN.opOUT; // only 6 bits
+    io_led[2][7] = fsmRUN.inputMode; // special case where we want to run inputs through all opcode
     
     seg.values = fsmRUN.displayOUT; // value to display at the 7 segment display
     

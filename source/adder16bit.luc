@@ -12,6 +12,7 @@ module adder16bit (
   sig xb[16];
   
   always {
+    // sum, 0 or subtract, 1
     if (alufn0 == 0){
         sum = $signed(a) + $signed(b); 
     }
@@ -19,6 +20,7 @@ module adder16bit (
         sum = $signed(a) - $signed(b);
     }
     
+    // checks for z and output z
     if (sum ==0){
         z = 1;
     }
@@ -26,11 +28,11 @@ module adder16bit (
         z = 0;
     }
     
-    n = sum[15];
+    n = sum[15]; // output n
     
-    out = sum;
-    xb = b ^ alufn0;
-    v = a[15] & xb[15] & ~sum[15] + ~a[15] & ~xb[15] & sum[15];   
+    out = sum; // output the sum
+    xb = b ^ alufn0; // creating xb
+    v = a[15] & xb[15] & ~sum[15] + ~a[15] & ~xb[15] & sum[15];   // output v
     
   }
 }

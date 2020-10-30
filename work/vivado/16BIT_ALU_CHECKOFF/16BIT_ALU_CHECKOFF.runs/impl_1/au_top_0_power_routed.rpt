@@ -1,7 +1,7 @@
 Copyright 1986-2020 Xilinx, Inc. All Rights Reserved.
 ----------------------------------------------------------------------------------------------------------------------------------------------
 | Tool Version     : Vivado v.2020.1 (win64) Build 2902540 Wed May 27 19:54:49 MDT 2020
-| Date             : Thu Oct 29 20:46:43 2020
+| Date             : Fri Oct 30 18:25:26 2020
 | Host             : ThinkingPad running 64-bit major release  (build 9200)
 | Command          : report_power -file au_top_0_power_routed.rpt -pb au_top_0_power_summary_routed.pb -rpx au_top_0_power_routed.rpx
 | Design           : au_top_0
@@ -33,7 +33,7 @@ Table of Contents
 | Total On-Chip Power (W)  | 0.090        |
 | Design Power Budget (W)  | Unspecified* |
 | Power Budget Margin (W)  | NA           |
-| Dynamic (W)              | 0.019        |
+| Dynamic (W)              | 0.018        |
 | Device Static (W)        | 0.072        |
 | Effective TJA (C/W)      | 4.9          |
 | Max Ambient (C)          | 84.6         |
@@ -53,12 +53,12 @@ Table of Contents
 | On-Chip        | Power (W) | Used     | Available | Utilization (%) |
 +----------------+-----------+----------+-----------+-----------------+
 | Clocks         |     0.002 |        3 |       --- |             --- |
-| Slice Logic    |    <0.001 |      878 |       --- |             --- |
-|   LUT as Logic |    <0.001 |      449 |     20800 |            2.16 |
+| Slice Logic    |    <0.001 |      945 |       --- |             --- |
+|   LUT as Logic |    <0.001 |      489 |     20800 |            2.35 |
 |   CARRY4       |    <0.001 |       30 |      8150 |            0.37 |
-|   Register     |    <0.001 |      269 |     41600 |            0.65 |
+|   Register     |    <0.001 |      284 |     41600 |            0.68 |
 |   Others       |     0.000 |       30 |       --- |             --- |
-| Signals        |    <0.001 |      742 |       --- |             --- |
+| Signals        |    <0.001 |      772 |       --- |             --- |
 | I/O            |     0.015 |       73 |       170 |           42.94 |
 | Static Power   |     0.072 |          |           |                 |
 | Total          |     0.090 |          |           |                 |
@@ -140,9 +140,8 @@ Table of Contents
 +----------+-----------+
 | Name     | Power (W) |
 +----------+-----------+
-| au_top_0 |     0.019 |
+| au_top_0 |     0.018 |
 |   fsmRUN |     0.002 |
-|     auto |     0.001 |
 +----------+-----------+
 
 

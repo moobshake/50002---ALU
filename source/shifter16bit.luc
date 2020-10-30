@@ -6,6 +6,7 @@ module shifter16bit (
   ) {
 
   always {
+    // shifting only got 3 cases, shift left, shift right, shift right with sign extension
     case (alufn10){
       b00: out = a << b[4:0];
       b01: out = a >> b[4:0];

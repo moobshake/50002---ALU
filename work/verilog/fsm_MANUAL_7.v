@@ -29,6 +29,7 @@ module fsm_MANUAL_7 (
   localparam OPCODE_brain = 3'd2;
   localparam RESULT_brain = 3'd3;
   localparam AUTO_brain = 3'd4;
+  localparam ILLEGAL_brain = 3'd5;
   
   reg [2:0] M_brain_d, M_brain_q = FIRSTINPUT_brain;
   
@@ -48,6 +49,30 @@ module fsm_MANUAL_7 (
     .v(M_alu_v),
     .n(M_alu_n)
   );
+  
+  localparam ADDOP = 6'h00;
+  
+  localparam SUBOP = 6'h01;
+  
+  localparam ANDOP = 6'h18;
+  
+  localparam OROP = 6'h1e;
+  
+  localparam XOROP = 6'h16;
+  
+  localparam ALDROP = 6'h1a;
+  
+  localparam SHLOP = 6'h20;
+  
+  localparam SHROP = 6'h21;
+  
+  localparam SRAOP = 6'h23;
+  
+  localparam CMPEQOP = 6'h33;
+  
+  localparam CMPLTOP = 6'h35;
+  
+  localparam CMPLEOP = 6'h37;
   
   always @* begin
     M_brain_d = M_brain_q;
@@ -95,7 +120,7 @@ module fsm_MANUAL_7 (
           end else begin
             M_result_d[0+7-:8] = in[0+7-:8];
             M_result_d[8+7-:8] = in[8+7-:8];
-            M_display_d = 32'h0e14aa0b;
+            M_display_d = 32'h030e140b;
             M_brain_d = FIRSTINPUT_brain;
           end
         end
@@ -117,14 +142,18 @@ module fsm_MANUAL_7 (
           end else begin
             M_result_d[0+7-:8] = in[0+7-:8];
             M_result_d[8+7-:8] = in[8+7-:8];
-            M_display_d = 32'h0e14aa10;
+            M_display_d = 32'h030e1410;
             M_brain_d = SECONDINPUT_brain;
           end
         end
       end
       OPCODE_brain: begin
         if (button[1+0-:1]) begin
-          M_brain_d = RESULT_brain;
+          if (M_opcode_q == 6'h00 || M_opcode_q == 6'h01 || M_opcode_q == 6'h18 || M_opcode_q == 6'h1e || M_opcode_q == 6'h16 || M_opcode_q == 6'h1a || M_opcode_q == 6'h20 || M_opcode_q == 6'h21 || M_opcode_q == 6'h23 || M_opcode_q == 6'h33 || M_opcode_q == 6'h35 || M_opcode_q == 6'h37) begin
+            M_brain_d = RESULT_brain;
+          end else begin
+            M_brain_d = ILLEGAL_brain;
+          end
         end else begin
           if (button[0+0-:1]) begin
             M_first_d[0+15-:16] = 1'h0;
@@ -138,8 +167,26 @@ module fsm_MANUAL_7 (
             M_result_d[0+7-:8] = 1'h0;
             M_result_d[8+7-:8] = 1'h0;
             M_opcode_d = in[16+0+5-:6];
-            M_display_d = 32'haaaa000a;
+            M_display_d = 32'h03aa000a;
             M_brain_d = OPCODE_brain;
+          end
+        end
+      end
+      ILLEGAL_brain: begin
+        if (button[1+0-:1]) begin
+          M_brain_d = OPCODE_brain;
+        end else begin
+          if (button[0+0-:1]) begin
+            M_first_d[0+15-:16] = 1'h0;
+            M_second_d[0+15-:16] = 1'h0;
+            M_opcode_d[0+5-:6] = 1'h0;
+            M_z_d = 1'h0;
+            M_v_d = 1'h0;
+            M_n_d = 1'h0;
+            M_brain_d = AUTO_brain;
+          end else begin
+            M_display_d = 32'h030e0f0f;
+            M_brain_d = ILLEGAL_brain;
           end
         end
       end
@@ -162,7 +209,7 @@ module fsm_MANUAL_7 (
             M_n_d = 1'h0;
             M_brain_d = AUTO_brain;
           end else begin
-            M_display_d[24+7-:8] = 8'haa;
+            M_display_d[24+7-:8] = 8'h03;
             M_display_d[16+7-:8] = M_z_q;
             M_display_d[8+7-:8] = M_v_q;
             M_display_d[0+7-:8] = M_n_q;

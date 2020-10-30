@@ -5,21 +5,23 @@ module fsm_COMBINE (
     input in [3][8], // get the input from the dip switch
     output aluOut[16], // alu output. to be shown in the io_leds
     output displayOUT[4][8],
-    output opOUT[6]
+    output opOUT[6],
+    output inputMode
   ) {
 
   .clk(clk){
     .rst(rst) {
-      fsm_MANUAL manual;
-      fsm_AUTO auto;
+      fsm_MANUAL manual; // creating the manual fsm
+      fsm_AUTO auto; // creating the auto fsm
       dff show[16](#INIT(0)); // store the output 
       dff display[4][8]; // store what to display on 7 segment displays
       dff opcode[6](#INIT(0)); // store 6 bit opcode
     }
-    fsm brain = {MANUAL, AUTO};
+    fsm brain = {MANUAL, AUTO}; // main fsm to synchronic manual and auto fsms
   }
   
   always {
+    // relay the outputs from the auto/manual fsm to the au_top
     manual.button = button;
     manual.in = in;
     auto.button = button;
@@ -27,7 +29,9 @@ module fsm_COMBINE (
     aluOut = show.q;
     displayOUT = display.q;
     opOUT = opcode.q;
+    inputMode = auto.inputMode;
     
+    // fsm to keep track of manual or auto state
     case (brain.q) {
       brain.MANUAL:
         if (button[0]) {

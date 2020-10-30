@@ -11,7 +11,8 @@ module fsm_COMBINE_4 (
     input [23:0] in,
     output reg [15:0] aluOut,
     output reg [31:0] displayOUT,
-    output reg [5:0] opOUT
+    output reg [5:0] opOUT,
+    output reg inputMode
   );
   
   
@@ -33,6 +34,7 @@ module fsm_COMBINE_4 (
   wire [16-1:0] M_auto_aluOut;
   wire [32-1:0] M_auto_displayOUT;
   wire [6-1:0] M_auto_opOUT;
+  wire [1-1:0] M_auto_inputMode;
   reg [2-1:0] M_auto_button;
   reg [24-1:0] M_auto_in;
   fsm_AUTO_8 auto (
@@ -42,7 +44,8 @@ module fsm_COMBINE_4 (
     .in(M_auto_in),
     .aluOut(M_auto_aluOut),
     .displayOUT(M_auto_displayOUT),
-    .opOUT(M_auto_opOUT)
+    .opOUT(M_auto_opOUT),
+    .inputMode(M_auto_inputMode)
   );
   reg [15:0] M_show_d, M_show_q = 1'h0;
   reg [31:0] M_display_d, M_display_q = 1'h0;
@@ -65,6 +68,7 @@ module fsm_COMBINE_4 (
     aluOut = M_show_q;
     displayOUT = M_display_q;
     opOUT = M_opcode_q;
+    inputMode = M_auto_inputMode;
     
     case (M_brain_q)
       MANUAL_brain: begin

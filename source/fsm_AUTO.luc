@@ -1,11 +1,12 @@
 module fsm_AUTO (
     input clk,  // clock
     input rst,  // reset
-    input button[2],
+    input button[2], // push buttons to recieve inputs to start or change states
+    input in [3][8], // get the input from the dip switch
     output aluOut[16], // alu output. to be shown in the io_leds
-    output displayOUT[4][8],
-    output opOUT[6],
-    input in [3][8] // get the input from the dip switch
+    output displayOUT[4][8], // seven segment display output
+    output opOUT[6], // display what opcode it is running currently
+    output inputMode // check if need take in user input mode
   ) {
   .clk(clk){
     .rst(rst) {
@@ -17,58 +18,85 @@ module fsm_AUTO (
       dff v[1](#INIT(0)); // store 1 bit v
       dff n[1](#INIT(0)); // store 1 bit n
       dff display[4][8]; // store what to display on 7 segment displays
+      dff inputModeStore[1](#INIT(0)); // store the input mode for the special mode
     }
-    fsm brain = {MANUAL, IDLE, TESTAUTO, TESTAUTOINPUT};
-    fsm autoBrain = {ADD, SUB, AND, OR, XOR, ALDR, SHL, SHR, SRA, CMPEQ, CMPLT, CMPLE};
-    fsm autoInputBrain = {INPUTA, INPUTB, RUN};
+    fsm brain = {MANUAL, IDLE, TESTAUTO, TESTAUTOINPUT}; // main fsm in this auto module
+    fsm autoBrain = {ADD, SUB, AND, OR, XOR, ALDR, SHL, SHR, SRA, CMPEQ, CMPLT, CMPLE}; // fsm that runs through all the instructions
+    fsm autoInputBrain = {INPUTA, INPUTB, RUN}; // intermediatery fsm to take inputs from the user then run the autoBrain
   }
   
   alu16bit alu; // call the alu.luc
   
   // list of test variables // can use hexdecimals also
+  // set the two inpts and key in the supposed output. will print 'P' if matches and 'F' if fails
   const ADDOP = 6b000000;
   const ADDTESTA = 16b0000000000000001;
   const ADDTESTB = 16b0000000000000001;
+  const ADDCORRECT = 16b0000000000000010;
+  const ADDCORRECTZVN = 3b000;
   const SUBOP = 6b000001;
   const SUBTESTA = 16b0000000000000011;
   const SUBTESTB = 16b0000000000000010;
+  const SUBCORRECT = 16b0000000000000001;
+  const SUBCORRECTZVN = 3b000;
   const ANDOP = 6b011000;
-  const ANDTESTA = 16b0000001000000011;
-  const ANDTESTB = 16b0000001000000001;
+  const ANDTESTA = 16b0110010111000101;
+  const ANDTESTB = 16b0001010101010011;
+  const ANDCORRECT = 16b0000010101000001;
+  const ANDCORRECTZVN = 3b000;
   const OROP = 6b011110;
-  const ORTESTA = 16b0000000000000011;
-  const ORTESTB = 16b0000000000001010;
+  const ORTESTA = 16b0110010111000101;
+  const ORTESTB = 16b0001010101010011;
+  const ORCORRECT = 16b0111010111010111;
+  const ORCORRECTZVN = 3b000;
   const XOROP = 6b010110;
-  const XORTESTA = 16b0000000000000011;
-  const XORTESTB = 16b0000000000001100;
+  const XORTESTA = 16b0110010111000101;
+  const XORTESTB = 16b0001010101010011;
+  const XORCORRECT = 16b0111000010010001;
+  const XORCORRECTZVN = 3b000;
   const ALDROP = 6b011010;
-  const ALDRTESTA = 16b0000000000000011;
-  const ALDRTESTB = 16b0000000000000010;
+  const ALDRTESTA = 16b0110010111000101;
+  const ALDRTESTB = 16b0001010101010011;
+  const ALDRCORRECT = 16b0110010111000101;
+  const ALDRCORRECTZVN = 3b000;
   const SHLOP = 6b100000;
   const SHLTESTA = 16b0000001000000011;
   const SHLTESTB = 16b0000001000000111;
+  const SHLCORRECT = 16b0000000000000010;
+  const SHLCORRECTZVN = 3b000;
   const SHROP = 6b100001;
   const SHRTESTA = 16b1000000000000000;
   const SHRTESTB = 16b0000000000000001;
+  const SHRCORRECT = 16b0000000000000010;
+  const SHRCORRECTZVN = 3b000;
   const SRAOP = 6b100011;
   const SRATESTA = 16b0000000000001100;
   const SRATESTB = 16b0000000000000001;
+  const SRACORRECT = 16b0000000000000010;
+  const SRACORRECTZVN = 3b000;
   const CMPEQOP = 6b110011;
   const CMPEQTESTA = 16b0000001000000011;
   const CMPEQTESTB = 16b0000001000000111;
+  const CMPEQCORRECT = 16b0000000000000010;
+  const CMPEQCORRECTZVN = 3b000;
   const CMPLTOP = 6b110101;
   const CMPLTTESTA = 16b1000000000000000;
   const CMPLTTESTB = 16b0000000000000001;
+  const CMPLTCORRECT = 16b0000000000000010;
+  const CMPLTCORRECTZVN = 3b000;
   const CMPLEOP = 6b110111;
   const CMPLETESTA = 16b0000000000001100;
   const CMPLETESTB = 16b0000000000000001;
+  const CMPLECORRECT = 16b0000000000000010;
+  const CMPLECORRECTZVN = 3b000;
   
-  const SLOWCLOCK_SIZE = 28;
+  const SLOWCLOCK_SIZE = 28; // change to smaller number for faster switching of states
   counter slowClock(#SIZE(SLOWCLOCK_SIZE), .clk(clk), .rst(rst));
   edge_detector slowClockEdge(#RISE(1), #FALL(0), .clk(clk));
   
   always {
-    slowClockEdge.in = slowClock.value[SLOWCLOCK_SIZE-1];
+    // standard inputs and outputs for the main fsm.
+    slowClockEdge.in = slowClock.value[SLOWCLOCK_SIZE-1]; 
     aluOut = result.q;
     displayOUT = display.q;
     opOUT = opcode.q;
@@ -79,20 +107,26 @@ module fsm_AUTO (
     z.d = alu.z;
     v.d = alu.v;
     n.d = alu.n;
-
+    inputMode = inputModeStore.q;
+    
+    // start of main fsm module
     case(brain.q) {
-      brain.MANUAL:
+      // main state when in manual mode ********************************
+      brain.MANUAL: 
         if (button[0]) { // transition from manual to auto
           brain.d = brain.IDLE;
         } 
         else {
+          inputModeStore.d = 0;
           brain.d = brain.MANUAL;
         }
+      // idle state to wait for user to choose which automode ********************************
       brain.IDLE:
-        if (button[1] && in[2][7]) { // start the auto testing
+        inputModeStore.d = in[2][7];
+        if (button[1] && in[2][7]) { // start the auto run through with inputs
           brain.d = brain.TESTAUTOINPUT;
         } 
-        else if (button[1]) {
+        else if (button[1]) { // normal auto mode, with pre-defined inputs from the 'const' above
           brain.d = brain.TESTAUTO;
         }
         else if (button[0]) { // goes back to manual mode
@@ -105,17 +139,24 @@ module fsm_AUTO (
           brain.d = brain.IDLE;
         }
         
+      // mode that get user to input two 16-bit and then will run through all the opcode and display the output ****************
       brain.TESTAUTOINPUT:
-        if (button[1] && in[2][7] == 0) { // restart the auto mode
+        inputModeStore.d = in[2][7];
+        if (button[1] && in[2][7] == 0) { // restart the auto mode and reset all the FSM to original state
+          autoInputBrain.d = autoInputBrain.INPUTA;
+          autoBrain.d = autoBrain.ADD;
           brain.d = brain.IDLE;
         } 
-        else if (button[0]) { // goes back to manual mode
+        else if (button[0]) { // goes back to manual mode and reset all the FSM to original state
+          autoInputBrain.d = autoInputBrain.INPUTA;
+          autoBrain.d = autoBrain.ADD;
           brain.d = brain.MANUAL; 
         } 
         else {
           brain.d = brain.TESTAUTOINPUT;
+          // running the intermediate fsm that takes in user inputs first ----------------------
           case (autoInputBrain.q) {
-            autoInputBrain.INPUTA:
+            autoInputBrain.INPUTA: // first input ---------------------------
               if (button[1]) {
                 first.d[7:0] = in[0]; // dip switch bank 0: first 8 bits
                 first.d[15:8] = in[1]; // dip switch bank 1: second 8 bits
@@ -124,10 +165,10 @@ module fsm_AUTO (
               else {
                 result.d[7:0] = in[0]; // dip switch bank 0: first 8 bits
                 result.d[15:8] = in[1]; // dip switch bank 1: second 8 bits
-                display.d = {8he, 8h14, 8haa, 8hb};  // 'In_A'
+                display.d = {8hb, 8he, 8h14, 8hb};  // 'AInA'
                 autoInputBrain.d = autoInputBrain.INPUTA;
               }
-            autoInputBrain.INPUTB:
+            autoInputBrain.INPUTB: // second input -----------------------------
               if (button[1]) {
                 second.d[7:0] = in[0];
                 second.d[15:8] = in[1];
@@ -136,11 +177,11 @@ module fsm_AUTO (
               else {
                 result.d[7:0] = in[0]; // dip switch bank 0: first 8 bits
                 result.d[15:8] = in[1]; // dip switch bank 1: second 8 bits
-                display.d = {8he, 8h14, 8haa, 8h10};  // 'In_b'
+                display.d = {8hb, 8he, 8h14, 8h10};  // 'AInb'
                 autoInputBrain.d = autoInputBrain.INPUTB;
               }
-            autoInputBrain.RUN:
-              if (button[1]) {
+            autoInputBrain.RUN: // auto running of all the opcodes -----------------
+              if (button[1]) { // restart the auto running and get the inputs agains
                 autoBrain.d = autoBrain.ADD;
                 first.d[15:0] = 0;
                 second.d[15:0] = 0;
@@ -151,19 +192,20 @@ module fsm_AUTO (
                 autoInputBrain.d = autoInputBrain.INPUTA;
               }
               else {
+                display.d[3] = 8h15;
+                display.d[2] = z.q;
+                display.d[1] = v.q;
+                display.d[0] = n.q;
+                result.d = alu.out;
                 autoInputBrain.d = autoInputBrain.RUN;
+                // running all the opcodes with the user inputs ++++++++++++++++++++++++++++++++
                 case (autoBrain.q) {
                   autoBrain.ADD:
                     if (slowClockEdge.out == b1) {
                       autoBrain.d = autoBrain.SUB;
                     }
                     else {
-                      display.d[3] = 8ha;
-                      display.d[2] = z.q;
-                      display.d[1] = v.q;
-                      display.d[0] = n.q;
                       opcode.d = ADDOP;
-                      result.d = alu.out;
                       autoBrain.d = autoBrain.ADD;
                     }
                   autoBrain.SUB:
@@ -171,12 +213,7 @@ module fsm_AUTO (
                       autoBrain.d = autoBrain.AND;
                     }
                     else {
-                      display.d[3] = 8ha;
-                      display.d[2] = z.q;
-                      display.d[1] = v.q;
-                      display.d[0] = n.q;
                       opcode.d = SUBOP;
-                      result.d = alu.out;
                       autoBrain.d = autoBrain.SUB;
                     }
                   autoBrain.AND:
@@ -184,12 +221,7 @@ module fsm_AUTO (
                       autoBrain.d = autoBrain.OR;
                     }
                     else {
-                      display.d[3] = 8ha;
-                      display.d[2] = z.q;
-                      display.d[1] = v.q;
-                      display.d[0] = n.q;
                       opcode.d = ANDOP;
-                      result.d = alu.out;
                       autoBrain.d = autoBrain.AND;
                     }
                   autoBrain.OR:
@@ -197,12 +229,7 @@ module fsm_AUTO (
                       autoBrain.d = autoBrain.XOR;
                     }
                     else {
-                      display.d[3] = 8ha;
-                      display.d[2] = z.q;
-                      display.d[1] = v.q;
-                      display.d[0] = n.q;
                       opcode.d = OROP;
-                      result.d = alu.out;
                       autoBrain.d = autoBrain.OR;
                     }
                   autoBrain.XOR:
@@ -210,12 +237,7 @@ module fsm_AUTO (
                       autoBrain.d = autoBrain.ALDR;
                     }
                     else {
-                      display.d[3] = 8ha;
-                      display.d[2] = z.q;
-                      display.d[1] = v.q;
-                      display.d[0] = n.q;
                       opcode.d = XOROP;
-                      result.d = alu.out;
                       autoBrain.d = autoBrain.XOR;
                     }
                   autoBrain.ALDR:
@@ -223,12 +245,7 @@ module fsm_AUTO (
                       autoBrain.d = autoBrain.SHL;
                     }
                     else {
-                      display.d[3] = 8ha;
-                      display.d[2] = z.q;
-                      display.d[1] = v.q;
-                      display.d[0] = n.q;
                       opcode.d = ALDROP;
-                      result.d = alu.out;
                       autoBrain.d = autoBrain.ALDR;
                     }
                   autoBrain.SHL:
@@ -236,12 +253,7 @@ module fsm_AUTO (
                       autoBrain.d = autoBrain.SHR;
                     }
                     else {
-                      display.d[3] = 8ha;
-                      display.d[2] = z.q;
-                      display.d[1] = v.q;
-                      display.d[0] = n.q;
                       opcode.d = SHLOP;
-                      result.d = alu.out;
                       autoBrain.d = autoBrain.SHL;
                     }
                   autoBrain.SHR:
@@ -249,12 +261,7 @@ module fsm_AUTO (
                       autoBrain.d = autoBrain.SRA;
                     }
                     else {
-                      display.d[3] = 8ha;
-                      display.d[2] = z.q;
-                      display.d[1] = v.q;
-                      display.d[0] = n.q;
                       opcode.d = SHROP;
-                      result.d = alu.out;
                       autoBrain.d = autoBrain.SHR;
                     }
                   autoBrain.SRA:
@@ -262,12 +269,7 @@ module fsm_AUTO (
                       autoBrain.d = autoBrain.CMPEQ;
                     }
                     else {
-                      display.d[3] = 8ha;
-                      display.d[2] = z.q;
-                      display.d[1] = v.q;
-                      display.d[0] = n.q;
                       opcode.d = SRAOP;
-                      result.d = alu.out;
                       autoBrain.d = autoBrain.SRA;
                     }
                   autoBrain.CMPEQ:
@@ -275,12 +277,7 @@ module fsm_AUTO (
                       autoBrain.d = autoBrain.CMPLT;
                     }
                     else {
-                      display.d[3] = 8ha;
-                      display.d[2] = z.q;
-                      display.d[1] = v.q;
-                      display.d[0] = n.q;
                       opcode.d = CMPEQOP;
-                      result.d = alu.out;
                       autoBrain.d = autoBrain.CMPEQ;
                     }
                   autoBrain.CMPLT:
@@ -288,12 +285,7 @@ module fsm_AUTO (
                       autoBrain.d = autoBrain.CMPLE;
                     }
                     else {
-                      display.d[3] = 8ha;
-                      display.d[2] = z.q;
-                      display.d[1] = v.q;
-                      display.d[0] = n.q;
                       opcode.d = CMPLTOP;
-                      result.d = alu.out;
                       autoBrain.d = autoBrain.CMPLT;
                     }
                   autoBrain.CMPLE:
@@ -301,12 +293,7 @@ module fsm_AUTO (
                       autoBrain.d = autoBrain.ADD;
                     }
                     else {
-                      display.d[3] = 8ha;
-                      display.d[2] = z.q;
-                      display.d[1] = v.q;
-                      display.d[0] = n.q;
                       opcode.d = CMPLEOP;
-                      result.d = alu.out;
                       autoBrain.d = autoBrain.CMPLE;
                     }
                 }
@@ -314,8 +301,9 @@ module fsm_AUTO (
           }
         }
         
-        
+      // mode that will run the pre-defined inputs and see whether the results match the pre-defined values *********************
       brain.TESTAUTO:
+        inputModeStore.d = in[2][7];
         if (button[1]) { // restart the auto mode
           autoBrain.d = autoBrain.ADD;
           brain.d = brain.IDLE;
@@ -326,20 +314,27 @@ module fsm_AUTO (
         } 
         else {
           brain.d = brain.TESTAUTO;
+          display.d[2] = z.q;
+          display.d[1] = v.q;
+          display.d[0] = n.q;
+          result.d = alu.out;
+          // fsm that runs through everything, similar to the above autoInputBrain fsm --------------------------------------------------------
           case (autoBrain.q) {
             autoBrain.ADD:
               if (slowClockEdge.out == b1) {
                 autoBrain.d = autoBrain.SUB;
               }
               else {
-                display.d[3] = 8ha;
-                display.d[2] = z.q;
-                display.d[1] = v.q;
-                display.d[0] = n.q;
+                // check if the results matches for 16-bit output and ZVN, show on first 7-seg display +++++++++++++++++++++++++++++++++++++
+                if (result.q == ADDCORRECT && z.q == ADDCORRECTZVN[2] && v.q == ADDCORRECTZVN[1] && n.q == ADDCORRECTZVN[0]) {
+                  display.d[3] = 8ha; // 'P'
+                }
+                else {
+                  display.d[3] = 8hd; // 'F'
+                }
                 first.d = ADDTESTA;
                 second.d = ADDTESTB;
                 opcode.d = ADDOP;
-                result.d = alu.out;
                 autoBrain.d = autoBrain.ADD;
               }
             autoBrain.SUB:  
@@ -347,15 +342,15 @@ module fsm_AUTO (
                 autoBrain.d = autoBrain.AND;
               }
               else {
-                display.d[3] = 8ha;
-                display.d[2] = z.q;
-                display.d[1] = v.q;
-                display.d[0] = n.q;
+                if (result.q == SUBCORRECT && z.q == SUBCORRECTZVN[2] && v.q == SUBCORRECTZVN[1] && n.q == SUBCORRECTZVN[0]) {
+                  display.d[3] = 8ha; // 'P'
+                }
+                else {
+                  display.d[3] = 8hd; // 'F'
+                }
                 first.d = SUBTESTA;
                 second.d = SUBTESTB;
                 opcode.d = SUBOP;
-                result.d = alu.out;
-                result.d = alu.out;
                 autoBrain.d = autoBrain.SUB;
               }
             autoBrain.AND:  
@@ -363,15 +358,15 @@ module fsm_AUTO (
                 autoBrain.d = autoBrain.OR;
               }
               else {
-                display.d[3] = 8ha;
-                display.d[2] = z.q;
-                display.d[1] = v.q;
-                display.d[0] = n.q;
+                if (result.q == ANDCORRECT && z.q == ANDCORRECTZVN[2] && v.q == ANDCORRECTZVN[1] && n.q == ANDCORRECTZVN[0]) {
+                  display.d[3] = 8ha; // 'P'
+                }
+                else {
+                  display.d[3] = 8hd; // 'F'
+                }
                 first.d = ANDTESTA;
                 second.d = ANDTESTB;
                 opcode.d = ANDOP;
-                result.d = alu.out;
-                result.d = alu.out;
                 autoBrain.d = autoBrain.AND;
               }
             autoBrain.OR:  
@@ -379,15 +374,15 @@ module fsm_AUTO (
                 autoBrain.d = autoBrain.XOR;
               }
               else {
-                display.d[3] = 8ha;
-                display.d[2] = z.q;
-                display.d[1] = v.q;
-                display.d[0] = n.q;
+                if (result.q == ORCORRECT && z.q == ORCORRECTZVN[2] && v.q == ORCORRECTZVN[1] && n.q == ORCORRECTZVN[0]) {
+                  display.d[3] = 8ha; // 'P'
+                }
+                else {
+                  display.d[3] = 8hd; // 'F'
+                }
                 first.d = ORTESTA;
                 second.d = ORTESTB;
                 opcode.d = OROP;
-                result.d = alu.out;
-                result.d = alu.out;
                 autoBrain.d = autoBrain.OR;
               }
             autoBrain.XOR:  
@@ -395,15 +390,15 @@ module fsm_AUTO (
                 autoBrain.d = autoBrain.ALDR;
               }
               else {
-                display.d[3] = 8ha;
-                display.d[2] = z.q;
-                display.d[1] = v.q;
-                display.d[0] = n.q;
+                if (result.q == XORCORRECT && z.q == XORCORRECTZVN[2] && v.q == XORCORRECTZVN[1] && n.q == XORCORRECTZVN[0]) {
+                  display.d[3] = 8ha; // 'P'
+                }
+                else {
+                  display.d[3] = 8hd; // 'F'
+                }
                 first.d = XORTESTA;
                 second.d = XORTESTB;
                 opcode.d = XOROP;
-                result.d = alu.out;
-                result.d = alu.out;
                 autoBrain.d = autoBrain.XOR;
               }
             autoBrain.ALDR:  
@@ -411,15 +406,15 @@ module fsm_AUTO (
                 autoBrain.d = autoBrain.SHL;
               }
               else {
-                display.d[3] = 8ha;
-                display.d[2] = z.q;
-                display.d[1] = v.q;
-                display.d[0] = n.q;
+                if (result.q == ALDRCORRECT && z.q == ALDRCORRECTZVN[2] && v.q == ALDRCORRECTZVN[1] && n.q == ALDRCORRECTZVN[0]) {
+                  display.d[3] = 8ha; // 'P'
+                }
+                else {
+                  display.d[3] = 8hd; // 'F'
+                }
                 first.d = ALDRTESTA;
                 second.d = ALDRTESTB;
                 opcode.d = ALDROP;
-                result.d = alu.out;
-                result.d = alu.out;
                 autoBrain.d = autoBrain.ALDR;
               }
             autoBrain.SHL:  
@@ -427,15 +422,15 @@ module fsm_AUTO (
                 autoBrain.d = autoBrain.SHR;
               }
               else {
-                display.d[3] = 8ha;
-                display.d[2] = z.q;
-                display.d[1] = v.q;
-                display.d[0] = n.q;
+                if (result.q == SHLCORRECT && z.q == SHLCORRECTZVN[2] && v.q == SHLCORRECTZVN[1] && n.q == SHLCORRECTZVN[0]) {
+                  display.d[3] = 8ha; // 'P'
+                }
+                else {
+                  display.d[3] = 8hd; // 'F'
+                }
                 first.d = SHLTESTA;
                 second.d = SHLTESTB;
                 opcode.d = SHLOP;
-                result.d = alu.out;
-                result.d = alu.out;
                 autoBrain.d = autoBrain.SHL;
               }
             autoBrain.SHR:  
@@ -443,15 +438,15 @@ module fsm_AUTO (
                 autoBrain.d = autoBrain.SRA;
               }
               else {
-                display.d[3] = 8ha;
-                display.d[2] = z.q;
-                display.d[1] = v.q;
-                display.d[0] = n.q;
+                if (result.q == SHRCORRECT && z.q == SHRCORRECTZVN[2] && v.q == SHRCORRECTZVN[1] && n.q == SHRCORRECTZVN[0]) {
+                  display.d[3] = 8ha; // 'P'
+                }
+                else {
+                  display.d[3] = 8hd; // 'F'
+                }
                 first.d = SHRTESTA;
                 second.d = SHRTESTB;
                 opcode.d = SHROP;
-                result.d = alu.out;
-                result.d = alu.out;
                 autoBrain.d = autoBrain.SHR;
               }
             autoBrain.SRA:  
@@ -459,15 +454,15 @@ module fsm_AUTO (
                 autoBrain.d = autoBrain.CMPEQ;
               }
               else {
-                display.d[3] = 8ha;
-                display.d[2] = z.q;
-                display.d[1] = v.q;
-                display.d[0] = n.q;
+                if (result.q == SRACORRECT && z.q == SRACORRECTZVN[2] && v.q == SRACORRECTZVN[1] && n.q == SRACORRECTZVN[0]) {
+                  display.d[3] = 8ha; // 'P'
+                }
+                else {
+                  display.d[3] = 8hd; // 'F'
+                }
                 first.d = SRATESTA;
                 second.d = SRATESTB;
                 opcode.d = SRAOP;
-                result.d = alu.out;
-                result.d = alu.out;
                 autoBrain.d = autoBrain.SRA;
               }
             autoBrain.CMPEQ:  
@@ -475,15 +470,15 @@ module fsm_AUTO (
                 autoBrain.d = autoBrain.CMPLT;
               }
               else {
-                display.d[3] = 8ha;
-                display.d[2] = z.q;
-                display.d[1] = v.q;
-                display.d[0] = n.q;
+                if (result.q == CMPEQCORRECT && z.q == CMPEQCORRECTZVN[2] && v.q == CMPEQCORRECTZVN[1] && n.q == CMPEQCORRECTZVN[0]) {
+                  display.d[3] = 8ha; // 'P'
+                }
+                else {
+                  display.d[3] = 8hd; // 'F'
+                }
                 first.d = CMPEQTESTA;
                 second.d = CMPEQTESTB;
                 opcode.d = CMPEQOP;
-                result.d = alu.out;
-                result.d = alu.out;
                 autoBrain.d = autoBrain.CMPEQ;
               }
             autoBrain.CMPLT:  
@@ -491,15 +486,15 @@ module fsm_AUTO (
                 autoBrain.d = autoBrain.CMPLE;
               }
               else {
-                display.d[3] = 8ha;
-                display.d[2] = z.q;
-                display.d[1] = v.q;
-                display.d[0] = n.q;
+                if (result.q == CMPLTCORRECT && z.q == CMPLTCORRECTZVN[2] && v.q == CMPLTCORRECTZVN[1] && n.q == CMPLTCORRECTZVN[0]) {
+                  display.d[3] = 8ha; // 'P'
+                }
+                else {
+                  display.d[3] = 8hd; // 'F'
+                }
                 first.d = CMPLTTESTA;
                 second.d = CMPLTTESTB;
                 opcode.d = CMPLTOP;
-                result.d = alu.out;
-                result.d = alu.out;
                 autoBrain.d = autoBrain.CMPLT;
               }
             autoBrain.CMPLE:  
@@ -507,15 +502,15 @@ module fsm_AUTO (
                 autoBrain.d = autoBrain.ADD;
               }
               else {
-                display.d[3] = 8ha;
-                display.d[2] = z.q;
-                display.d[1] = v.q;
-                display.d[0] = n.q;
+                if (result.q == CMPLECORRECT && z.q == CMPLECORRECTZVN[2] && v.q == CMPLECORRECTZVN[1] && n.q == CMPLECORRECTZVN[0]) {
+                  display.d[3] = 8ha; // 'P'
+                }
+                else {
+                  display.d[3] = 8hd; // 'F'
+                }
                 first.d = CMPLETESTA;
                 second.d = CMPLETESTB;
                 opcode.d = CMPLEOP;
-                result.d = alu.out;
-                result.d = alu.out;
                 autoBrain.d = autoBrain.CMPLE;
               }
           }

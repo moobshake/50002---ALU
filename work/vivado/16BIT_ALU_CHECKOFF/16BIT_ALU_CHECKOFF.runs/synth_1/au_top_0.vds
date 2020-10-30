@@ -2,8 +2,8 @@
 # Vivado v2020.1 (64-bit)
 # SW Build 2902540 on Wed May 27 19:54:49 MDT 2020
 # IP Build 2902112 on Wed May 27 22:43:36 MDT 2020
-# Start of session at: Thu Oct 29 20:45:02 2020
-# Process ID: 13812
+# Start of session at: Fri Oct 30 18:23:40 2020
+# Process ID: 17588
 # Current directory: C:/Users/darry/Documents/alchitry/16BIT_ALU_CHECKOFF/work/vivado/16BIT_ALU_CHECKOFF/16BIT_ALU_CHECKOFF.runs/synth_1
 # Command line: vivado.exe -log au_top_0.vds -product Vivado -mode batch -messageDb vivado.pb -notrace -source au_top_0.tcl
 # Log file: C:/Users/darry/Documents/alchitry/16BIT_ALU_CHECKOFF/work/vivado/16BIT_ALU_CHECKOFF/16BIT_ALU_CHECKOFF.runs/synth_1/au_top_0.vds
@@ -17,9 +17,9 @@ INFO: [Common 17-349] Got license for feature 'Synthesis' and/or device 'xc7a35t
 INFO: [Device 21-403] Loading part xc7a35tftg256-1
 INFO: [Synth 8-7079] Multithreading enabled for synth_design using a maximum of 2 processes.
 INFO: [Synth 8-7078] Launching helper process for spawning children vivado processes
-INFO: [Synth 8-7075] Helper process launched with PID 10724
+INFO: [Synth 8-7075] Helper process launched with PID 16496
 ---------------------------------------------------------------------------------
-Starting RTL Elaboration : Time (s): cpu = 00:00:04 ; elapsed = 00:00:04 . Memory (MB): peak = 1013.496 ; gain = 0.000
+Starting RTL Elaboration : Time (s): cpu = 00:00:05 ; elapsed = 00:00:04 . Memory (MB): peak = 1013.055 ; gain = 0.000
 ---------------------------------------------------------------------------------
 INFO: [Synth 8-6157] synthesizing module 'au_top_0' [C:/Users/darry/Documents/alchitry/16BIT_ALU_CHECKOFF/work/vivado/16BIT_ALU_CHECKOFF/16BIT_ALU_CHECKOFF.srcs/sources_1/imports/verilog/au_top_0.v:7]
 INFO: [Synth 8-6157] synthesizing module 'button_conditioner_2' [C:/Users/darry/Documents/alchitry/16BIT_ALU_CHECKOFF/work/vivado/16BIT_ALU_CHECKOFF/16BIT_ALU_CHECKOFF.srcs/sources_1/imports/verilog/button_conditioner_2.v:13]
@@ -46,6 +46,19 @@ INFO: [Synth 8-6157] synthesizing module 'fsm_MANUAL_7' [C:/Users/darry/Document
 	Parameter OPCODE_brain bound to: 3'b010 
 	Parameter RESULT_brain bound to: 3'b011 
 	Parameter AUTO_brain bound to: 3'b100 
+	Parameter ILLEGAL_brain bound to: 3'b101 
+	Parameter ADDOP bound to: 6'b000000 
+	Parameter SUBOP bound to: 6'b000001 
+	Parameter ANDOP bound to: 6'b011000 
+	Parameter OROP bound to: 6'b011110 
+	Parameter XOROP bound to: 6'b010110 
+	Parameter ALDROP bound to: 6'b011010 
+	Parameter SHLOP bound to: 6'b100000 
+	Parameter SHROP bound to: 6'b100001 
+	Parameter SRAOP bound to: 6'b100011 
+	Parameter CMPEQOP bound to: 6'b110011 
+	Parameter CMPLTOP bound to: 6'b110101 
+	Parameter CMPLEOP bound to: 6'b110111 
 INFO: [Synth 8-6157] synthesizing module 'alu16bit_12' [C:/Users/darry/Documents/alchitry/16BIT_ALU_CHECKOFF/work/vivado/16BIT_ALU_CHECKOFF/16BIT_ALU_CHECKOFF.srcs/sources_1/imports/verilog/alu16bit_12.v:7]
 INFO: [Synth 8-6157] synthesizing module 'adder16bit_14' [C:/Users/darry/Documents/alchitry/16BIT_ALU_CHECKOFF/work/vivado/16BIT_ALU_CHECKOFF/16BIT_ALU_CHECKOFF.srcs/sources_1/imports/verilog/adder16bit_14.v:7]
 INFO: [Synth 8-6155] done synthesizing module 'adder16bit_14' (5#1) [C:/Users/darry/Documents/alchitry/16BIT_ALU_CHECKOFF/work/vivado/16BIT_ALU_CHECKOFF/16BIT_ALU_CHECKOFF.srcs/sources_1/imports/verilog/adder16bit_14.v:7]
@@ -57,7 +70,7 @@ INFO: [Synth 8-6155] done synthesizing module 'compare16bit_16' (7#1) [C:/Users/
 INFO: [Synth 8-6157] synthesizing module 'bool16bit_17' [C:/Users/darry/Documents/alchitry/16BIT_ALU_CHECKOFF/work/vivado/16BIT_ALU_CHECKOFF/16BIT_ALU_CHECKOFF.srcs/sources_1/imports/verilog/bool16bit_17.v:7]
 INFO: [Synth 8-6155] done synthesizing module 'bool16bit_17' (8#1) [C:/Users/darry/Documents/alchitry/16BIT_ALU_CHECKOFF/work/vivado/16BIT_ALU_CHECKOFF/16BIT_ALU_CHECKOFF.srcs/sources_1/imports/verilog/bool16bit_17.v:7]
 INFO: [Synth 8-6155] done synthesizing module 'alu16bit_12' (9#1) [C:/Users/darry/Documents/alchitry/16BIT_ALU_CHECKOFF/work/vivado/16BIT_ALU_CHECKOFF/16BIT_ALU_CHECKOFF.srcs/sources_1/imports/verilog/alu16bit_12.v:7]
-INFO: [Synth 8-155] case statement is not full and has no default [C:/Users/darry/Documents/alchitry/16BIT_ALU_CHECKOFF/work/vivado/16BIT_ALU_CHECKOFF/16BIT_ALU_CHECKOFF.srcs/sources_1/imports/verilog/fsm_MANUAL_7.v:73]
+INFO: [Synth 8-155] case statement is not full and has no default [C:/Users/darry/Documents/alchitry/16BIT_ALU_CHECKOFF/work/vivado/16BIT_ALU_CHECKOFF/16BIT_ALU_CHECKOFF.srcs/sources_1/imports/verilog/fsm_MANUAL_7.v:98]
 INFO: [Synth 8-6155] done synthesizing module 'fsm_MANUAL_7' (10#1) [C:/Users/darry/Documents/alchitry/16BIT_ALU_CHECKOFF/work/vivado/16BIT_ALU_CHECKOFF/16BIT_ALU_CHECKOFF.srcs/sources_1/imports/verilog/fsm_MANUAL_7.v:7]
 INFO: [Synth 8-6157] synthesizing module 'fsm_AUTO_8' [C:/Users/darry/Documents/alchitry/16BIT_ALU_CHECKOFF/work/vivado/16BIT_ALU_CHECKOFF/16BIT_ALU_CHECKOFF.srcs/sources_1/imports/verilog/fsm_AUTO_8.v:7]
 	Parameter MANUAL_brain bound to: 2'b00 
@@ -82,39 +95,63 @@ INFO: [Synth 8-6157] synthesizing module 'fsm_AUTO_8' [C:/Users/darry/Documents/
 	Parameter ADDOP bound to: 6'b000000 
 	Parameter ADDTESTA bound to: 16'b0000000000000001 
 	Parameter ADDTESTB bound to: 16'b0000000000000001 
+	Parameter ADDCORRECT bound to: 16'b0000000000000010 
+	Parameter ADDCORRECTZVN bound to: 3'b000 
 	Parameter SUBOP bound to: 6'b000001 
 	Parameter SUBTESTA bound to: 16'b0000000000000011 
 	Parameter SUBTESTB bound to: 16'b0000000000000010 
+	Parameter SUBCORRECT bound to: 16'b0000000000000001 
+	Parameter SUBCORRECTZVN bound to: 3'b000 
 	Parameter ANDOP bound to: 6'b011000 
-	Parameter ANDTESTA bound to: 16'b0000001000000011 
-	Parameter ANDTESTB bound to: 16'b0000001000000001 
+	Parameter ANDTESTA bound to: 16'b0110010111000101 
+	Parameter ANDTESTB bound to: 16'b0001010101010011 
+	Parameter ANDCORRECT bound to: 16'b0000010101000001 
+	Parameter ANDCORRECTZVN bound to: 3'b000 
 	Parameter OROP bound to: 6'b011110 
-	Parameter ORTESTA bound to: 16'b0000000000000011 
-	Parameter ORTESTB bound to: 16'b0000000000001010 
+	Parameter ORTESTA bound to: 16'b0110010111000101 
+	Parameter ORTESTB bound to: 16'b0001010101010011 
+	Parameter ORCORRECT bound to: 16'b0111010111010111 
+	Parameter ORCORRECTZVN bound to: 3'b000 
 	Parameter XOROP bound to: 6'b010110 
-	Parameter XORTESTA bound to: 16'b0000000000000011 
-	Parameter XORTESTB bound to: 16'b0000000000001100 
+	Parameter XORTESTA bound to: 16'b0110010111000101 
+	Parameter XORTESTB bound to: 16'b0001010101010011 
+	Parameter XORCORRECT bound to: 16'b0111000010010001 
+	Parameter XORCORRECTZVN bound to: 3'b000 
 	Parameter ALDROP bound to: 6'b011010 
-	Parameter ALDRTESTA bound to: 16'b0000000000000011 
-	Parameter ALDRTESTB bound to: 16'b0000000000000010 
+	Parameter ALDRTESTA bound to: 16'b0110010111000101 
+	Parameter ALDRTESTB bound to: 16'b0001010101010011 
+	Parameter ALDRCORRECT bound to: 16'b0110010111000101 
+	Parameter ALDRCORRECTZVN bound to: 3'b000 
 	Parameter SHLOP bound to: 6'b100000 
 	Parameter SHLTESTA bound to: 16'b0000001000000011 
 	Parameter SHLTESTB bound to: 16'b0000001000000111 
+	Parameter SHLCORRECT bound to: 16'b0000000000000010 
+	Parameter SHLCORRECTZVN bound to: 3'b000 
 	Parameter SHROP bound to: 6'b100001 
 	Parameter SHRTESTA bound to: 16'b1000000000000000 
 	Parameter SHRTESTB bound to: 16'b0000000000000001 
+	Parameter SHRCORRECT bound to: 16'b0000000000000010 
+	Parameter SHRCORRECTZVN bound to: 3'b000 
 	Parameter SRAOP bound to: 6'b100011 
 	Parameter SRATESTA bound to: 16'b0000000000001100 
 	Parameter SRATESTB bound to: 16'b0000000000000001 
+	Parameter SRACORRECT bound to: 16'b0000000000000010 
+	Parameter SRACORRECTZVN bound to: 3'b000 
 	Parameter CMPEQOP bound to: 6'b110011 
 	Parameter CMPEQTESTA bound to: 16'b0000001000000011 
 	Parameter CMPEQTESTB bound to: 16'b0000001000000111 
+	Parameter CMPEQCORRECT bound to: 16'b0000000000000010 
+	Parameter CMPEQCORRECTZVN bound to: 3'b000 
 	Parameter CMPLTOP bound to: 6'b110101 
 	Parameter CMPLTTESTA bound to: 16'b1000000000000000 
 	Parameter CMPLTTESTB bound to: 16'b0000000000000001 
+	Parameter CMPLTCORRECT bound to: 16'b0000000000000010 
+	Parameter CMPLTCORRECTZVN bound to: 3'b000 
 	Parameter CMPLEOP bound to: 6'b110111 
 	Parameter CMPLETESTA bound to: 16'b0000000000001100 
 	Parameter CMPLETESTB bound to: 16'b0000000000000001 
+	Parameter CMPLECORRECT bound to: 16'b0000000000000010 
+	Parameter CMPLECORRECTZVN bound to: 3'b000 
 	Parameter SLOWCLOCK_SIZE bound to: 5'b11100 
 INFO: [Synth 8-6157] synthesizing module 'counter_13' [C:/Users/darry/Documents/alchitry/16BIT_ALU_CHECKOFF/work/vivado/16BIT_ALU_CHECKOFF/16BIT_ALU_CHECKOFF.srcs/sources_1/imports/verilog/counter_13.v:14]
 	Parameter SIZE bound to: 5'b11100 
@@ -123,9 +160,9 @@ INFO: [Synth 8-6157] synthesizing module 'counter_13' [C:/Users/darry/Documents/
 	Parameter UP bound to: 1'b1 
 	Parameter MAX_VALUE bound to: 1'b0 
 INFO: [Synth 8-6155] done synthesizing module 'counter_13' (11#1) [C:/Users/darry/Documents/alchitry/16BIT_ALU_CHECKOFF/work/vivado/16BIT_ALU_CHECKOFF/16BIT_ALU_CHECKOFF.srcs/sources_1/imports/verilog/counter_13.v:14]
-INFO: [Synth 8-155] case statement is not full and has no default [C:/Users/darry/Documents/alchitry/16BIT_ALU_CHECKOFF/work/vivado/16BIT_ALU_CHECKOFF/16BIT_ALU_CHECKOFF.srcs/sources_1/imports/verilog/fsm_AUTO_8.v:257]
-INFO: [Synth 8-155] case statement is not full and has no default [C:/Users/darry/Documents/alchitry/16BIT_ALU_CHECKOFF/work/vivado/16BIT_ALU_CHECKOFF/16BIT_ALU_CHECKOFF.srcs/sources_1/imports/verilog/fsm_AUTO_8.v:219]
-INFO: [Synth 8-155] case statement is not full and has no default [C:/Users/darry/Documents/alchitry/16BIT_ALU_CHECKOFF/work/vivado/16BIT_ALU_CHECKOFF/16BIT_ALU_CHECKOFF.srcs/sources_1/imports/verilog/fsm_AUTO_8.v:432]
+INFO: [Synth 8-155] case statement is not full and has no default [C:/Users/darry/Documents/alchitry/16BIT_ALU_CHECKOFF/work/vivado/16BIT_ALU_CHECKOFF/16BIT_ALU_CHECKOFF.srcs/sources_1/imports/verilog/fsm_AUTO_8.v:321]
+INFO: [Synth 8-155] case statement is not full and has no default [C:/Users/darry/Documents/alchitry/16BIT_ALU_CHECKOFF/work/vivado/16BIT_ALU_CHECKOFF/16BIT_ALU_CHECKOFF.srcs/sources_1/imports/verilog/fsm_AUTO_8.v:278]
+INFO: [Synth 8-155] case statement is not full and has no default [C:/Users/darry/Documents/alchitry/16BIT_ALU_CHECKOFF/work/vivado/16BIT_ALU_CHECKOFF/16BIT_ALU_CHECKOFF.srcs/sources_1/imports/verilog/fsm_AUTO_8.v:441]
 INFO: [Synth 8-6155] done synthesizing module 'fsm_AUTO_8' (12#1) [C:/Users/darry/Documents/alchitry/16BIT_ALU_CHECKOFF/work/vivado/16BIT_ALU_CHECKOFF/16BIT_ALU_CHECKOFF.srcs/sources_1/imports/verilog/fsm_AUTO_8.v:7]
 INFO: [Synth 8-6155] done synthesizing module 'fsm_COMBINE_4' (13#1) [C:/Users/darry/Documents/alchitry/16BIT_ALU_CHECKOFF/work/vivado/16BIT_ALU_CHECKOFF/16BIT_ALU_CHECKOFF.srcs/sources_1/imports/verilog/fsm_COMBINE_4.v:7]
 INFO: [Synth 8-6157] synthesizing module 'multi_seven_seg_5' [C:/Users/darry/Documents/alchitry/16BIT_ALU_CHECKOFF/work/vivado/16BIT_ALU_CHECKOFF/16BIT_ALU_CHECKOFF.srcs/sources_1/imports/verilog/multi_seven_seg_5.v:12]
@@ -147,18 +184,18 @@ INFO: [Synth 8-6155] done synthesizing module 'decoder_11' (16#1) [C:/Users/darr
 INFO: [Synth 8-6155] done synthesizing module 'multi_seven_seg_5' (17#1) [C:/Users/darry/Documents/alchitry/16BIT_ALU_CHECKOFF/work/vivado/16BIT_ALU_CHECKOFF/16BIT_ALU_CHECKOFF.srcs/sources_1/imports/verilog/multi_seven_seg_5.v:12]
 INFO: [Synth 8-6155] done synthesizing module 'au_top_0' (18#1) [C:/Users/darry/Documents/alchitry/16BIT_ALU_CHECKOFF/work/vivado/16BIT_ALU_CHECKOFF/16BIT_ALU_CHECKOFF.srcs/sources_1/imports/verilog/au_top_0.v:7]
 ---------------------------------------------------------------------------------
-Finished RTL Elaboration : Time (s): cpu = 00:00:06 ; elapsed = 00:00:06 . Memory (MB): peak = 1013.496 ; gain = 0.000
+Finished RTL Elaboration : Time (s): cpu = 00:00:06 ; elapsed = 00:00:06 . Memory (MB): peak = 1013.055 ; gain = 0.000
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Handling Custom Attributes
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Handling Custom Attributes : Time (s): cpu = 00:00:07 ; elapsed = 00:00:07 . Memory (MB): peak = 1013.496 ; gain = 0.000
+Finished Handling Custom Attributes : Time (s): cpu = 00:00:06 ; elapsed = 00:00:06 . Memory (MB): peak = 1013.055 ; gain = 0.000
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished RTL Optimization Phase 1 : Time (s): cpu = 00:00:07 ; elapsed = 00:00:07 . Memory (MB): peak = 1013.496 ; gain = 0.000
+Finished RTL Optimization Phase 1 : Time (s): cpu = 00:00:06 ; elapsed = 00:00:06 . Memory (MB): peak = 1013.055 ; gain = 0.000
 ---------------------------------------------------------------------------------
-Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.021 . Memory (MB): peak = 1013.496 ; gain = 0.000
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.029 . Memory (MB): peak = 1013.055 ; gain = 0.000
 INFO: [Project 1-570] Preparing netlist for logic optimization
 
 Processing XDC Constraints
@@ -173,26 +210,26 @@ INFO: [Project 1-236] Implementation specific constraints were found while readi
 Resolution: To avoid this warning, move constraints listed in [.Xil/au_top_0_propImpl.xdc] to another XDC file and exclude this new file from synthesis with the used_in_synthesis property (File Properties dialog in GUI) and re-run elaboration/synthesis.
 Completed Processing XDC Constraints
 
-Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 1013.496 ; gain = 0.000
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 1013.055 ; gain = 0.000
 INFO: [Project 1-111] Unisim Transformation Summary:
 No Unisim elements were transformed.
 
-Constraint Validation Runtime : Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.011 . Memory (MB): peak = 1013.496 ; gain = 0.000
+Constraint Validation Runtime : Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.011 . Memory (MB): peak = 1013.055 ; gain = 0.000
 ---------------------------------------------------------------------------------
-Finished Constraint Validation : Time (s): cpu = 00:00:13 ; elapsed = 00:00:14 . Memory (MB): peak = 1013.496 ; gain = 0.000
+Finished Constraint Validation : Time (s): cpu = 00:00:13 ; elapsed = 00:00:13 . Memory (MB): peak = 1013.055 ; gain = 0.000
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Loading Part and Timing Information
 ---------------------------------------------------------------------------------
 Loading part: xc7a35tftg256-1
 ---------------------------------------------------------------------------------
-Finished Loading Part and Timing Information : Time (s): cpu = 00:00:13 ; elapsed = 00:00:14 . Memory (MB): peak = 1013.496 ; gain = 0.000
+Finished Loading Part and Timing Information : Time (s): cpu = 00:00:13 ; elapsed = 00:00:13 . Memory (MB): peak = 1013.055 ; gain = 0.000
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Applying 'set_property' XDC Constraints
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished applying 'set_property' XDC Constraints : Time (s): cpu = 00:00:14 ; elapsed = 00:00:14 . Memory (MB): peak = 1013.496 ; gain = 0.000
+Finished applying 'set_property' XDC Constraints : Time (s): cpu = 00:00:13 ; elapsed = 00:00:13 . Memory (MB): peak = 1013.055 ; gain = 0.000
 ---------------------------------------------------------------------------------
 INFO: [Synth 8-802] inferred FSM for state register 'M_brain_q_reg' in module 'fsm_MANUAL_7'
 INFO: [Synth 8-802] inferred FSM for state register 'M_brain_q_reg' in module 'fsm_AUTO_8'
@@ -203,7 +240,8 @@ INFO: [Synth 8-802] inferred FSM for state register 'M_brain_q_reg' in module 'f
        SECONDINPUT_brain |                              001 |                              001
             OPCODE_brain |                              010 |                              010
             RESULT_brain |                              011 |                              011
-              AUTO_brain |                              100 |                              100
+           ILLEGAL_brain |                              100 |                              101
+              AUTO_brain |                              101 |                              100
 ---------------------------------------------------------------------------------------------------
 INFO: [Synth 8-3354] encoded FSM with state register 'M_brain_q_reg' using encoding 'sequential' in module 'fsm_MANUAL_7'
 ---------------------------------------------------------------------------------------------------
@@ -216,7 +254,7 @@ INFO: [Synth 8-3354] encoded FSM with state register 'M_brain_q_reg' using encod
 ---------------------------------------------------------------------------------------------------
 INFO: [Synth 8-3354] encoded FSM with state register 'M_brain_q_reg' using encoding 'sequential' in module 'fsm_AUTO_8'
 ---------------------------------------------------------------------------------
-Finished RTL Optimization Phase 2 : Time (s): cpu = 00:00:14 ; elapsed = 00:00:14 . Memory (MB): peak = 1013.496 ; gain = 0.000
+Finished RTL Optimization Phase 2 : Time (s): cpu = 00:00:14 ; elapsed = 00:00:14 . Memory (MB): peak = 1013.055 ; gain = 0.000
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start RTL Component Statistics 
@@ -236,31 +274,34 @@ Detailed RTL Component Info :
 	                6 Bit    Registers := 3     
 	                4 Bit    Registers := 2     
 	                2 Bit    Registers := 3     
-	                1 Bit    Registers := 10    
+	                1 Bit    Registers := 11    
 +---Muxes : 
-	   5 Input   32 Bit        Muxes := 1     
-	   4 Input   32 Bit        Muxes := 2     
-	   2 Input   32 Bit        Muxes := 1     
+	   6 Input   32 Bit        Muxes := 1     
+	   2 Input   32 Bit        Muxes := 3     
+	   4 Input   32 Bit        Muxes := 3     
 	   2 Input   18 Bit        Muxes := 1     
 	   2 Input   16 Bit        Muxes := 4     
 	   4 Input   16 Bit        Muxes := 12    
-	   5 Input   16 Bit        Muxes := 3     
+	   6 Input   16 Bit        Muxes := 3     
 	  13 Input   16 Bit        Muxes := 2     
+	  13 Input    8 Bit        Muxes := 1     
+	   7 Input    8 Bit        Muxes := 1     
 	   4 Input    8 Bit        Muxes := 1     
 	   2 Input    7 Bit        Muxes := 1     
 	   2 Input    6 Bit        Muxes := 3     
-	   5 Input    6 Bit        Muxes := 1     
+	   6 Input    6 Bit        Muxes := 1     
 	   4 Input    6 Bit        Muxes := 1     
-	   2 Input    4 Bit        Muxes := 6     
+	   2 Input    4 Bit        Muxes := 14    
 	   4 Input    4 Bit        Muxes := 1     
-	   5 Input    3 Bit        Muxes := 1     
-	   2 Input    3 Bit        Muxes := 11    
-	   2 Input    2 Bit        Muxes := 9     
+	   6 Input    3 Bit        Muxes := 1     
+	   2 Input    3 Bit        Muxes := 14    
+	  13 Input    3 Bit        Muxes := 1     
+	   2 Input    2 Bit        Muxes := 11    
 	   6 Input    2 Bit        Muxes := 1     
 	   4 Input    2 Bit        Muxes := 1     
-	   4 Input    1 Bit        Muxes := 50    
-	   2 Input    1 Bit        Muxes := 17    
-	   5 Input    1 Bit        Muxes := 8     
+	   4 Input    1 Bit        Muxes := 51    
+	   2 Input    1 Bit        Muxes := 19    
+	   6 Input    1 Bit        Muxes := 10    
 	  13 Input    1 Bit        Muxes := 2     
 ---------------------------------------------------------------------------------
 Finished RTL Component Statistics 
@@ -278,7 +319,7 @@ Finished Part Resource Summary
 Start Cross Boundary and Area Optimization
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Cross Boundary and Area Optimization : Time (s): cpu = 00:00:19 ; elapsed = 00:00:19 . Memory (MB): peak = 1013.496 ; gain = 0.000
+Finished Cross Boundary and Area Optimization : Time (s): cpu = 00:00:19 ; elapsed = 00:00:19 . Memory (MB): peak = 1013.055 ; gain = 0.000
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start ROM, RAM, DSP and Shift Register Reporting
@@ -298,19 +339,19 @@ Finished ROM, RAM, DSP and Shift Register Reporting
 Start Applying XDC Timing Constraints
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Applying XDC Timing Constraints : Time (s): cpu = 00:00:26 ; elapsed = 00:00:26 . Memory (MB): peak = 1013.496 ; gain = 0.000
+Finished Applying XDC Timing Constraints : Time (s): cpu = 00:00:27 ; elapsed = 00:00:27 . Memory (MB): peak = 1013.055 ; gain = 0.000
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Timing Optimization
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Timing Optimization : Time (s): cpu = 00:00:29 ; elapsed = 00:00:29 . Memory (MB): peak = 1013.496 ; gain = 0.000
+Finished Timing Optimization : Time (s): cpu = 00:00:29 ; elapsed = 00:00:30 . Memory (MB): peak = 1013.055 ; gain = 0.000
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Technology Mapping
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Technology Mapping : Time (s): cpu = 00:00:29 ; elapsed = 00:00:29 . Memory (MB): peak = 1021.320 ; gain = 7.824
+Finished Technology Mapping : Time (s): cpu = 00:00:30 ; elapsed = 00:00:30 . Memory (MB): peak = 1026.902 ; gain = 13.848
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start IO Insertion
@@ -328,37 +369,37 @@ Start Final Netlist Cleanup
 Finished Final Netlist Cleanup
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished IO Insertion : Time (s): cpu = 00:00:33 ; elapsed = 00:00:33 . Memory (MB): peak = 1021.320 ; gain = 7.824
+Finished IO Insertion : Time (s): cpu = 00:00:34 ; elapsed = 00:00:34 . Memory (MB): peak = 1026.902 ; gain = 13.848
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Renaming Generated Instances
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Renaming Generated Instances : Time (s): cpu = 00:00:33 ; elapsed = 00:00:33 . Memory (MB): peak = 1021.320 ; gain = 7.824
+Finished Renaming Generated Instances : Time (s): cpu = 00:00:34 ; elapsed = 00:00:34 . Memory (MB): peak = 1026.902 ; gain = 13.848
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Rebuilding User Hierarchy
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Rebuilding User Hierarchy : Time (s): cpu = 00:00:33 ; elapsed = 00:00:33 . Memory (MB): peak = 1021.320 ; gain = 7.824
+Finished Rebuilding User Hierarchy : Time (s): cpu = 00:00:34 ; elapsed = 00:00:34 . Memory (MB): peak = 1026.902 ; gain = 13.848
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Renaming Generated Ports
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Renaming Generated Ports : Time (s): cpu = 00:00:33 ; elapsed = 00:00:33 . Memory (MB): peak = 1021.320 ; gain = 7.824
+Finished Renaming Generated Ports : Time (s): cpu = 00:00:34 ; elapsed = 00:00:34 . Memory (MB): peak = 1026.902 ; gain = 13.848
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Handling Custom Attributes
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Handling Custom Attributes : Time (s): cpu = 00:00:33 ; elapsed = 00:00:33 . Memory (MB): peak = 1021.320 ; gain = 7.824
+Finished Handling Custom Attributes : Time (s): cpu = 00:00:34 ; elapsed = 00:00:34 . Memory (MB): peak = 1026.902 ; gain = 13.848
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Renaming Generated Nets
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Renaming Generated Nets : Time (s): cpu = 00:00:33 ; elapsed = 00:00:33 . Memory (MB): peak = 1021.320 ; gain = 7.824
+Finished Renaming Generated Nets : Time (s): cpu = 00:00:34 ; elapsed = 00:00:34 . Memory (MB): peak = 1026.902 ; gain = 13.848
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Writing Synthesis Report
@@ -376,37 +417,38 @@ Report Cell Usage:
 +------+-------+------+
 |1     |BUFG   |     1|
 |2     |CARRY4 |    30|
-|3     |LUT1   |    11|
-|4     |LUT2   |    48|
-|5     |LUT3   |    99|
-|6     |LUT4   |    87|
-|7     |LUT5   |    77|
-|8     |LUT6   |   229|
-|9     |FDRE   |   268|
+|3     |LUT1   |    10|
+|4     |LUT2   |    60|
+|5     |LUT3   |   103|
+|6     |LUT4   |    90|
+|7     |LUT5   |   117|
+|8     |LUT6   |   222|
+|9     |FDRE   |   281|
 |10    |FDSE   |     4|
 |11    |IBUF   |    28|
-|12    |OBUF   |    45|
+|12    |OBUF   |    44|
+|13    |OBUFT  |     1|
 +------+-------+------+
 ---------------------------------------------------------------------------------
-Finished Writing Synthesis Report : Time (s): cpu = 00:00:33 ; elapsed = 00:00:33 . Memory (MB): peak = 1021.320 ; gain = 7.824
+Finished Writing Synthesis Report : Time (s): cpu = 00:00:34 ; elapsed = 00:00:34 . Memory (MB): peak = 1026.902 ; gain = 13.848
 ---------------------------------------------------------------------------------
 Synthesis finished with 0 errors, 0 critical warnings and 0 warnings.
-Synthesis Optimization Runtime : Time (s): cpu = 00:00:24 ; elapsed = 00:00:31 . Memory (MB): peak = 1021.320 ; gain = 7.824
-Synthesis Optimization Complete : Time (s): cpu = 00:00:33 ; elapsed = 00:00:33 . Memory (MB): peak = 1021.320 ; gain = 7.824
+Synthesis Optimization Runtime : Time (s): cpu = 00:00:25 ; elapsed = 00:00:32 . Memory (MB): peak = 1026.902 ; gain = 13.848
+Synthesis Optimization Complete : Time (s): cpu = 00:00:34 ; elapsed = 00:00:34 . Memory (MB): peak = 1026.902 ; gain = 13.848
 INFO: [Project 1-571] Translating synthesized netlist
-Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.017 . Memory (MB): peak = 1024.156 ; gain = 0.000
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.018 . Memory (MB): peak = 1026.902 ; gain = 0.000
 INFO: [Netlist 29-17] Analyzing 30 Unisim elements for replacement
 INFO: [Netlist 29-28] Unisim Transformation completed in 0 CPU seconds
 INFO: [Project 1-570] Preparing netlist for logic optimization
 INFO: [Opt 31-138] Pushed 0 inverter(s) to 0 load pin(s).
-Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 1024.156 ; gain = 0.000
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 1026.902 ; gain = 0.000
 INFO: [Project 1-111] Unisim Transformation Summary:
 No Unisim elements were transformed.
 
 INFO: [Common 17-83] Releasing license: Synthesis
 61 Infos, 0 Warnings, 0 Critical Warnings and 0 Errors encountered.
 synth_design completed successfully
-synth_design: Time (s): cpu = 00:00:38 ; elapsed = 00:00:39 . Memory (MB): peak = 1024.156 ; gain = 10.660
+synth_design: Time (s): cpu = 00:00:39 ; elapsed = 00:00:40 . Memory (MB): peak = 1026.902 ; gain = 13.848
 INFO: [Common 17-1381] The checkpoint 'C:/Users/darry/Documents/alchitry/16BIT_ALU_CHECKOFF/work/vivado/16BIT_ALU_CHECKOFF/16BIT_ALU_CHECKOFF.runs/synth_1/au_top_0.dcp' has been generated.
 INFO: [runtcl-4] Executing : report_utilization -file au_top_0_utilization_synth.rpt -pb au_top_0_utilization_synth.pb
-INFO: [Common 17-206] Exiting Vivado at Thu Oct 29 20:45:43 2020...
+INFO: [Common 17-206] Exiting Vivado at Fri Oct 30 18:24:23 2020...
