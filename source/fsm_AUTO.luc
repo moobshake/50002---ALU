@@ -5,14 +5,14 @@ module fsm_AUTO (
     input in [3][8], // get the input from the dip switch
     output aluOut[16], // alu output. to be shown in the io_leds
     output displayOUT[4][8], // seven segment display output
-    output opOUT[6], // display what opcode it is running currently
+    output opOUT[6], // display what aluFN it is running currently
     output inputMode // check if need take in user input mode
   ) {
   .clk(clk){
     .rst(rst) {
       dff first[16](#INIT(0)); // store 16 bit input a
       dff second[16](#INIT(0)); // store 16 bit input b
-      dff opcode[6](#INIT(0)); // store 6 bit opcode
+      dff aluFN[6](#INIT(0)); // store 6 bit aluFN
       dff result[16](#INIT(0)); // store 16 bit for output on led
       dff z[1](#INIT(0)); // store 1 bit z
       dff v[1](#INIT(0)); // store 1 bit v
@@ -21,7 +21,7 @@ module fsm_AUTO (
       dff inputModeStore[1](#INIT(0)); // store the input mode for the special mode
     }
     fsm brain = {MANUAL, IDLE, TESTAUTO, TESTAUTOINPUT}; // main fsm in this auto module
-    fsm autoBrain = {ADD, SUB, AND, OR, XOR, ALDR, SHL, SHR, SRA, CMPEQ, CMPLT, CMPLE}; // fsm that runs through all the instructions
+    fsm autoBrain = {ADD, SUB, AND, OR, XOR, ALDR, SHL, SHR, SRA, CMPEQ, CMPLT, CMPLE, MUL, DIV, NAND, NOR, XNOR}; // fsm that runs through all the instructions
     fsm autoInputBrain = {INPUTA, INPUTB, RUN}; // intermediatery fsm to take inputs from the user then run the autoBrain
   }
   
@@ -30,67 +30,98 @@ module fsm_AUTO (
   // list of test variables // can use hexdecimals also
   // set the two inpts and key in the supposed output. will print 'P' if matches and 'F' if fails
   const ADDOP = 6b000000;
-  const ADDTESTA = 16b0000000000000001;
-  const ADDTESTB = 16b0000000000000001;
-  const ADDCORRECT = 16b0000000000000010;
-  const ADDCORRECTZVN = 3b000;
-  const SUBOP = 6b000001;
-  const SUBTESTA = 16b0000000000000011;
-  const SUBTESTB = 16b0000000000000010;
-  const SUBCORRECT = 16b0000000000000001;
-  const SUBCORRECTZVN = 3b000;
-  const ANDOP = 6b011000;
-  const ANDTESTA = 16b0110010111000101;
-  const ANDTESTB = 16b0001010101010011;
-  const ANDCORRECT = 16b0000010101000001;
-  const ANDCORRECTZVN = 3b000;
-  const OROP = 6b011110;
-  const ORTESTA = 16b0110010111000101;
-  const ORTESTB = 16b0001010101010011;
-  const ORCORRECT = 16b0111010111010111;
-  const ORCORRECTZVN = 3b000;
-  const XOROP = 6b010110;
-  const XORTESTA = 16b0110010111000101;
-  const XORTESTB = 16b0001010101010011;
-  const XORCORRECT = 16b0111000010010001;
-  const XORCORRECTZVN = 3b000;
-  const ALDROP = 6b011010;
-  const ALDRTESTA = 16b0110010111000101;
-  const ALDRTESTB = 16b0001010101010011;
-  const ALDRCORRECT = 16b0110010111000101;
-  const ALDRCORRECTZVN = 3b000;
-  const SHLOP = 6b100000;
-  const SHLTESTA = 16b0000001000000011;
-  const SHLTESTB = 16b0000001000000111;
-  const SHLCORRECT = 16b0000000000000010;
-  const SHLCORRECTZVN = 3b000;
-  const SHROP = 6b100001;
-  const SHRTESTA = 16b1000000000000000;
-  const SHRTESTB = 16b0000000000000001;
-  const SHRCORRECT = 16b0000000000000010;
-  const SHRCORRECTZVN = 3b000;
-  const SRAOP = 6b100011;
-  const SRATESTA = 16b0000000000001100;
-  const SRATESTB = 16b0000000000000001;
-  const SRACORRECT = 16b0000000000000010;
-  const SRACORRECTZVN = 3b000;
-  const CMPEQOP = 6b110011;
-  const CMPEQTESTA = 16b0000001000000011;
-  const CMPEQTESTB = 16b0000001000000111;
-  const CMPEQCORRECT = 16b0000000000000010;
-  const CMPEQCORRECTZVN = 3b000;
-  const CMPLTOP = 6b110101;
-  const CMPLTTESTA = 16b1000000000000000;
-  const CMPLTTESTB = 16b0000000000000001;
-  const CMPLTCORRECT = 16b0000000000000010;
-  const CMPLTCORRECTZVN = 3b000;
-  const CMPLEOP = 6b110111;
-  const CMPLETESTA = 16b0000000000001100;
-  const CMPLETESTB = 16b0000000000000001;
-  const CMPLECORRECT = 16b0000000000000010;
-  const CMPLECORRECTZVN = 3b000;
+  const ADDTESTA = 16h4000;
+  const ADDTESTB = 16h4000;
+  const ADDCORRECT = 16h8000;
+  const ADDCORRECTZVN = 3b011;
   
-  const SLOWCLOCK_SIZE = 28; // change to smaller number for faster switching of states
+  const SUBOP = 6b000001;
+  const SUBTESTA = 16h8000;
+  const SUBTESTB = 16h0001;
+  const SUBCORRECT = 16h7FFF;
+  const SUBCORRECTZVN = 3b010;
+  
+  const MULOP = 6b001000;
+  const MULTESTA = 16h4000;
+  const MULTESTB = 16h0002;
+  const MULCORRECT = 16h8000;
+  const MULCORRECTZVN = 3b011;
+  
+  const DIVOP = 6b001001;
+  const DIVTESTA = 16h7FFF;
+  const DIVTESTB = 16hFFFF;
+  const DIVCORRECT = 16h8001;
+  const DIVCORRECTZVN = 3b001;
+  
+  const ANDOP = 6b011000;
+  const ANDTESTA = 16h0003;
+  const ANDTESTB = 16h0005;
+  const ANDCORRECT = 16h0001;
+  
+  const NANDOP = 6b010111;
+  const NANDTESTA = 16hFFF3;
+  const NANDTESTB = 16hFFF5;
+  const NANDCORRECT = 16h000E;
+  
+  const OROP = 6b011110;
+  const ORTESTA = 16h0003;
+  const ORTESTB = 16h0005;
+  const ORCORRECT = 16h0007;
+  
+  const NOROP = 6b010001;
+  const NORTESTA = 16hFFF3;
+  const NORTESTB = 16hFFF5;
+  const NORCORRECT = 16h0008;
+  
+  const XOROP = 6b010110;
+  const XORTESTA = 16h0003;
+  const XORTESTB = 16h0005;
+  const XORCORRECT = 16h0006;
+  
+  const XNOROP = 6b011001;
+  const XNORTESTA = 16hFFF3;
+  const XNORTESTB = 16h0005;
+  const XNORCORRECT = 16h0009;
+  
+  const ALDROP = 6b011010;
+  const ALDRTESTA = 16h0003;
+  const ALDRTESTB = 16h0005;
+  const ALDRCORRECT = 16h0003;
+  
+  const SHLOP = 6b100000;
+  const SHLTESTA = 16h7000;
+  const SHLTESTB = 16h0001;
+  const SHLCORRECT = 16h8000;
+  
+  const SHROP = 6b100001;
+  const SHRTESTA = 16h0080;
+  const SHRTESTB = 16h0004;
+  const SHRCORRECT = 16h0008;
+  
+  const SRAOP = 6b100011;
+  const SRATESTA = 16h8000;
+  const SRATESTB = 16h0004;
+  const SRACORRECT = 16hF800;
+  
+  const CMPEQOP = 6b110011;
+  const CMPEQTESTA = 16hFFFF;
+  const CMPEQTESTB = 16hFFFF;
+  const CMPEQCORRECT = 16h0001;
+  const CMPEQCORRECTZVN = 3b110;
+  
+  const CMPLTOP = 6b110101;
+  const CMPLTTESTA = 16hFFFF;
+  const CMPLTTESTB = 16h7FFF;
+  const CMPLTCORRECT = 16h0001;
+  const CMPLTCORRECTZVN = 3b001;
+  
+  const CMPLEOP = 6b110111;
+  const CMPLETESTA = 16h8000;
+  const CMPLETESTB = 16h0001;
+  const CMPLECORRECT = 16h0001;
+  const CMPLECORRECTZVN = 3b011;
+  
+  const SLOWCLOCK_SIZE = 29; // change to smaller number for faster switching of states
   counter slowClock(#SIZE(SLOWCLOCK_SIZE), .clk(clk), .rst(rst));
   edge_detector slowClockEdge(#RISE(1), #FALL(0), .clk(clk));
   
@@ -99,10 +130,10 @@ module fsm_AUTO (
     slowClockEdge.in = slowClock.value[SLOWCLOCK_SIZE-1]; 
     aluOut = result.q;
     displayOUT = display.q;
-    opOUT = opcode.q;
+    opOUT = aluFN.q;
     alu.a = first.q;
     alu.b = second.q;
-    alu.alufn = opcode.q;
+    alu.alufn = aluFN.q;
     aluOut = result.q;
     z.d = alu.z;
     v.d = alu.v;
@@ -135,11 +166,11 @@ module fsm_AUTO (
         else {
           display.d = {8hb, 8h11, 8h12, 8h0}; // 'AUTO'
           result.d = 16b1111111111111111;
-          opcode.d = 6b111111;
+          aluFN.d = 6b111111;
           brain.d = brain.IDLE;
         }
         
-      // mode that get user to input two 16-bit and then will run through all the opcode and display the output ****************
+      // mode that get user to input two 16-bit and then will run through all the aluFN and display the output ****************
       brain.TESTAUTOINPUT:
         inputModeStore.d = in[2][7];
         if (button[1] && in[2][7] == 0) { // restart the auto mode and reset all the FSM to original state
@@ -180,12 +211,12 @@ module fsm_AUTO (
                 display.d = {8hb, 8he, 8h14, 8h10};  // 'AInb'
                 autoInputBrain.d = autoInputBrain.INPUTB;
               }
-            autoInputBrain.RUN: // auto running of all the opcodes -----------------
+            autoInputBrain.RUN: // auto running of all the aluFNs -----------------
               if (button[1]) { // restart the auto running and get the inputs agains
                 autoBrain.d = autoBrain.ADD;
                 first.d[15:0] = 0;
                 second.d[15:0] = 0;
-                opcode.d[5:0] = 0;
+                aluFN.d[5:0] = 0;
                 z.d = 0;
                 v.d = 0;
                 n.d = 0;
@@ -198,22 +229,22 @@ module fsm_AUTO (
                 display.d[0] = n.q;
                 result.d = alu.out;
                 autoInputBrain.d = autoInputBrain.RUN;
-                // running all the opcodes with the user inputs ++++++++++++++++++++++++++++++++
+                // running all the aluFNs with the user inputs ++++++++++++++++++++++++++++++++
                 case (autoBrain.q) {
                   autoBrain.ADD:
                     if (slowClockEdge.out == b1) {
                       autoBrain.d = autoBrain.SUB;
                     }
                     else {
-                      opcode.d = ADDOP;
+                      aluFN.d = ADDOP;
                       autoBrain.d = autoBrain.ADD;
-                    }
+                    }                    
                   autoBrain.SUB:
                     if (slowClockEdge.out == b1) {
                       autoBrain.d = autoBrain.AND;
                     }
                     else {
-                      opcode.d = SUBOP;
+                      aluFN.d = SUBOP;
                       autoBrain.d = autoBrain.SUB;
                     }
                   autoBrain.AND:
@@ -221,7 +252,7 @@ module fsm_AUTO (
                       autoBrain.d = autoBrain.OR;
                     }
                     else {
-                      opcode.d = ANDOP;
+                      aluFN.d = ANDOP;
                       autoBrain.d = autoBrain.AND;
                     }
                   autoBrain.OR:
@@ -229,7 +260,7 @@ module fsm_AUTO (
                       autoBrain.d = autoBrain.XOR;
                     }
                     else {
-                      opcode.d = OROP;
+                      aluFN.d = OROP;
                       autoBrain.d = autoBrain.OR;
                     }
                   autoBrain.XOR:
@@ -237,7 +268,7 @@ module fsm_AUTO (
                       autoBrain.d = autoBrain.ALDR;
                     }
                     else {
-                      opcode.d = XOROP;
+                      aluFN.d = XOROP;
                       autoBrain.d = autoBrain.XOR;
                     }
                   autoBrain.ALDR:
@@ -245,7 +276,7 @@ module fsm_AUTO (
                       autoBrain.d = autoBrain.SHL;
                     }
                     else {
-                      opcode.d = ALDROP;
+                      aluFN.d = ALDROP;
                       autoBrain.d = autoBrain.ALDR;
                     }
                   autoBrain.SHL:
@@ -253,7 +284,7 @@ module fsm_AUTO (
                       autoBrain.d = autoBrain.SHR;
                     }
                     else {
-                      opcode.d = SHLOP;
+                      aluFN.d = SHLOP;
                       autoBrain.d = autoBrain.SHL;
                     }
                   autoBrain.SHR:
@@ -261,7 +292,7 @@ module fsm_AUTO (
                       autoBrain.d = autoBrain.SRA;
                     }
                     else {
-                      opcode.d = SHROP;
+                      aluFN.d = SHROP;
                       autoBrain.d = autoBrain.SHR;
                     }
                   autoBrain.SRA:
@@ -269,7 +300,7 @@ module fsm_AUTO (
                       autoBrain.d = autoBrain.CMPEQ;
                     }
                     else {
-                      opcode.d = SRAOP;
+                      aluFN.d = SRAOP;
                       autoBrain.d = autoBrain.SRA;
                     }
                   autoBrain.CMPEQ:
@@ -277,7 +308,7 @@ module fsm_AUTO (
                       autoBrain.d = autoBrain.CMPLT;
                     }
                     else {
-                      opcode.d = CMPEQOP;
+                      aluFN.d = CMPEQOP;
                       autoBrain.d = autoBrain.CMPEQ;
                     }
                   autoBrain.CMPLT:
@@ -285,16 +316,56 @@ module fsm_AUTO (
                       autoBrain.d = autoBrain.CMPLE;
                     }
                     else {
-                      opcode.d = CMPLTOP;
+                      aluFN.d = CMPLTOP;
                       autoBrain.d = autoBrain.CMPLT;
                     }
                   autoBrain.CMPLE:
                     if (slowClockEdge.out == b1) {
+                      autoBrain.d = autoBrain.MUL;
+                    }
+                    else {
+                      aluFN.d = CMPLEOP;
+                      autoBrain.d = autoBrain.CMPLE;
+                    }
+                  autoBrain.MUL:
+                    if (slowClockEdge.out == b1) {
+                      autoBrain.d = autoBrain.DIV;
+                    }
+                    else {
+                      aluFN.d = MULOP;
+                      autoBrain.d = autoBrain.MUL;
+                    }
+                  autoBrain.DIV:
+                    if (slowClockEdge.out == b1) {
+                      autoBrain.d = autoBrain.NAND;
+                    }
+                    else {
+                      aluFN.d = DIVOP;
+                      autoBrain.d = autoBrain.DIV;
+                    }
+                  autoBrain.NAND:
+                    if (slowClockEdge.out == b1) {
+                      autoBrain.d = autoBrain.NOR;
+                    }
+                    else {
+                      aluFN.d = NANDOP;
+                      autoBrain.d = autoBrain.NAND;
+                    }
+                  autoBrain.NOR:
+                    if (slowClockEdge.out == b1) {
+                      autoBrain.d = autoBrain.XNOR;
+                    }
+                    else {
+                      aluFN.d = NOROP;
+                      autoBrain.d = autoBrain.NOR;
+                    }
+                  autoBrain.XNOR:
+                    if (slowClockEdge.out == b1) {
                       autoBrain.d = autoBrain.ADD;
                     }
                     else {
-                      opcode.d = CMPLEOP;
-                      autoBrain.d = autoBrain.CMPLE;
+                      aluFN.d = XNOROP;
+                      autoBrain.d = autoBrain.XNOR;                          
                     }
                 }
               }
@@ -334,7 +405,7 @@ module fsm_AUTO (
                 }
                 first.d = ADDTESTA;
                 second.d = ADDTESTB;
-                opcode.d = ADDOP;
+                aluFN.d = ADDOP;
                 autoBrain.d = autoBrain.ADD;
               }
             autoBrain.SUB:  
@@ -350,7 +421,7 @@ module fsm_AUTO (
                 }
                 first.d = SUBTESTA;
                 second.d = SUBTESTB;
-                opcode.d = SUBOP;
+                aluFN.d = SUBOP;
                 autoBrain.d = autoBrain.SUB;
               }
             autoBrain.AND:  
@@ -358,7 +429,7 @@ module fsm_AUTO (
                 autoBrain.d = autoBrain.OR;
               }
               else {
-                if (result.q == ANDCORRECT && z.q == ANDCORRECTZVN[2] && v.q == ANDCORRECTZVN[1] && n.q == ANDCORRECTZVN[0]) {
+                if (result.q == ANDCORRECT) {
                   display.d[3] = 8ha; // 'P'
                 }
                 else {
@@ -366,7 +437,7 @@ module fsm_AUTO (
                 }
                 first.d = ANDTESTA;
                 second.d = ANDTESTB;
-                opcode.d = ANDOP;
+                aluFN.d = ANDOP;
                 autoBrain.d = autoBrain.AND;
               }
             autoBrain.OR:  
@@ -374,7 +445,7 @@ module fsm_AUTO (
                 autoBrain.d = autoBrain.XOR;
               }
               else {
-                if (result.q == ORCORRECT && z.q == ORCORRECTZVN[2] && v.q == ORCORRECTZVN[1] && n.q == ORCORRECTZVN[0]) {
+                if (result.q == ORCORRECT) {
                   display.d[3] = 8ha; // 'P'
                 }
                 else {
@@ -382,7 +453,7 @@ module fsm_AUTO (
                 }
                 first.d = ORTESTA;
                 second.d = ORTESTB;
-                opcode.d = OROP;
+                aluFN.d = OROP;
                 autoBrain.d = autoBrain.OR;
               }
             autoBrain.XOR:  
@@ -390,7 +461,7 @@ module fsm_AUTO (
                 autoBrain.d = autoBrain.ALDR;
               }
               else {
-                if (result.q == XORCORRECT && z.q == XORCORRECTZVN[2] && v.q == XORCORRECTZVN[1] && n.q == XORCORRECTZVN[0]) {
+                if (result.q == XORCORRECT) {
                   display.d[3] = 8ha; // 'P'
                 }
                 else {
@@ -398,7 +469,7 @@ module fsm_AUTO (
                 }
                 first.d = XORTESTA;
                 second.d = XORTESTB;
-                opcode.d = XOROP;
+                aluFN.d = XOROP;
                 autoBrain.d = autoBrain.XOR;
               }
             autoBrain.ALDR:  
@@ -406,7 +477,7 @@ module fsm_AUTO (
                 autoBrain.d = autoBrain.SHL;
               }
               else {
-                if (result.q == ALDRCORRECT && z.q == ALDRCORRECTZVN[2] && v.q == ALDRCORRECTZVN[1] && n.q == ALDRCORRECTZVN[0]) {
+                if (result.q == ALDRCORRECT) {
                   display.d[3] = 8ha; // 'P'
                 }
                 else {
@@ -414,7 +485,7 @@ module fsm_AUTO (
                 }
                 first.d = ALDRTESTA;
                 second.d = ALDRTESTB;
-                opcode.d = ALDROP;
+                aluFN.d = ALDROP;
                 autoBrain.d = autoBrain.ALDR;
               }
             autoBrain.SHL:  
@@ -422,7 +493,7 @@ module fsm_AUTO (
                 autoBrain.d = autoBrain.SHR;
               }
               else {
-                if (result.q == SHLCORRECT && z.q == SHLCORRECTZVN[2] && v.q == SHLCORRECTZVN[1] && n.q == SHLCORRECTZVN[0]) {
+                if (result.q == SHLCORRECT) {
                   display.d[3] = 8ha; // 'P'
                 }
                 else {
@@ -430,7 +501,7 @@ module fsm_AUTO (
                 }
                 first.d = SHLTESTA;
                 second.d = SHLTESTB;
-                opcode.d = SHLOP;
+                aluFN.d = SHLOP;
                 autoBrain.d = autoBrain.SHL;
               }
             autoBrain.SHR:  
@@ -438,7 +509,7 @@ module fsm_AUTO (
                 autoBrain.d = autoBrain.SRA;
               }
               else {
-                if (result.q == SHRCORRECT && z.q == SHRCORRECTZVN[2] && v.q == SHRCORRECTZVN[1] && n.q == SHRCORRECTZVN[0]) {
+                if (result.q == SHRCORRECT) {
                   display.d[3] = 8ha; // 'P'
                 }
                 else {
@@ -446,7 +517,7 @@ module fsm_AUTO (
                 }
                 first.d = SHRTESTA;
                 second.d = SHRTESTB;
-                opcode.d = SHROP;
+                aluFN.d = SHROP;
                 autoBrain.d = autoBrain.SHR;
               }
             autoBrain.SRA:  
@@ -454,7 +525,7 @@ module fsm_AUTO (
                 autoBrain.d = autoBrain.CMPEQ;
               }
               else {
-                if (result.q == SRACORRECT && z.q == SRACORRECTZVN[2] && v.q == SRACORRECTZVN[1] && n.q == SRACORRECTZVN[0]) {
+                if (result.q == SRACORRECT) {
                   display.d[3] = 8ha; // 'P'
                 }
                 else {
@@ -462,7 +533,7 @@ module fsm_AUTO (
                 }
                 first.d = SRATESTA;
                 second.d = SRATESTB;
-                opcode.d = SRAOP;
+                aluFN.d = SRAOP;
                 autoBrain.d = autoBrain.SRA;
               }
             autoBrain.CMPEQ:  
@@ -478,7 +549,7 @@ module fsm_AUTO (
                 }
                 first.d = CMPEQTESTA;
                 second.d = CMPEQTESTB;
-                opcode.d = CMPEQOP;
+                aluFN.d = CMPEQOP;
                 autoBrain.d = autoBrain.CMPEQ;
               }
             autoBrain.CMPLT:  
@@ -494,12 +565,12 @@ module fsm_AUTO (
                 }
                 first.d = CMPLTTESTA;
                 second.d = CMPLTTESTB;
-                opcode.d = CMPLTOP;
+                aluFN.d = CMPLTOP;
                 autoBrain.d = autoBrain.CMPLT;
               }
             autoBrain.CMPLE:  
               if (slowClockEdge.out == b1) {
-                autoBrain.d = autoBrain.ADD;
+                autoBrain.d = autoBrain.MUL;
               }
               else {
                 if (result.q == CMPLECORRECT && z.q == CMPLECORRECTZVN[2] && v.q == CMPLECORRECTZVN[1] && n.q == CMPLECORRECTZVN[0]) {
@@ -510,8 +581,88 @@ module fsm_AUTO (
                 }
                 first.d = CMPLETESTA;
                 second.d = CMPLETESTB;
-                opcode.d = CMPLEOP;
+                aluFN.d = CMPLEOP;
                 autoBrain.d = autoBrain.CMPLE;
+              }
+            autoBrain.MUL:  
+              if (slowClockEdge.out == b1) {
+                autoBrain.d = autoBrain.DIV;
+              }
+              else {
+                if (result.q == MULCORRECT && z.q == MULCORRECTZVN[2] && v.q == MULCORRECTZVN[1] && n.q == MULCORRECTZVN[0]) {
+                  display.d[3] = 8ha; // 'P'
+                }
+                else {
+                  display.d[3] = 8hd; // 'F'
+                }
+                first.d = MULTESTA;
+                second.d = MULTESTB;
+                aluFN.d = MULOP;
+                autoBrain.d = autoBrain.MUL;
+              }
+            autoBrain.DIV:  
+              if (slowClockEdge.out == b1) {
+                autoBrain.d = autoBrain.NAND;
+              }
+              else {
+                if (result.q == DIVCORRECT && z.q == DIVCORRECTZVN[2] && v.q == DIVCORRECTZVN[1] && n.q == DIVCORRECTZVN[0]) {
+                  display.d[3] = 8ha; // 'P'
+                }
+                else {
+                  display.d[3] = 8hd; // 'F'
+                }
+                first.d = DIVTESTA;
+                second.d = DIVTESTB;
+                aluFN.d = DIVOP;
+                autoBrain.d = autoBrain.DIV;
+              }
+            autoBrain.NAND:  
+              if (slowClockEdge.out == b1) {
+                autoBrain.d = autoBrain.NOR;
+              }
+              else {
+                if (result.q == NANDCORRECT) {
+                  display.d[3] = 8ha; // 'P'
+                }
+                else {
+                  display.d[3] = 8hd; // 'F'
+                }
+                first.d = NANDTESTA;
+                second.d = NANDTESTB;
+                aluFN.d = NANDOP;
+                autoBrain.d = autoBrain.NAND;
+              }
+            autoBrain.NOR:  
+              if (slowClockEdge.out == b1) {
+                autoBrain.d = autoBrain.XNOR;
+              }
+              else {
+                if (result.q == NORCORRECT) {
+                  display.d[3] = 8ha; // 'P'
+                }
+                else {
+                  display.d[3] = 8hd; // 'F'
+                }
+                first.d = NORTESTA;
+                second.d = NORTESTB;
+                aluFN.d = NOROP;
+                autoBrain.d = autoBrain.NOR;
+              }
+            autoBrain.XNOR:  
+              if (slowClockEdge.out == b1) {
+                autoBrain.d = autoBrain.ADD;
+              }
+              else {
+                if (result.q == XNORCORRECT) {
+                  display.d[3] = 8ha; // 'P'
+                }
+                else {
+                  display.d[3] = 8hd; // 'F'
+                }
+                first.d = XNORTESTA;
+                second.d = XNORTESTB;
+                aluFN.d = XNOROP;
+                autoBrain.d = autoBrain.XNOR;
               }
           }
         }

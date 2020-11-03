@@ -1,7 +1,7 @@
 Copyright 1986-2020 Xilinx, Inc. All Rights Reserved.
 --------------------------------------------------------------------------------------------------------------------------------------------------------------
 | Tool Version : Vivado v.2020.1 (win64) Build 2902540 Wed May 27 19:54:49 MDT 2020
-| Date         : Fri Oct 30 18:25:25 2020
+| Date         : Tue Nov  3 20:15:49 2020
 | Host         : ThinkingPad running 64-bit major release  (build 9200)
 | Command      : report_methodology -file au_top_0_methodology_drc_routed.rpt -pb au_top_0_methodology_drc_routed.pb -rpx au_top_0_methodology_drc_routed.rpx
 | Design       : au_top_0
@@ -23,15 +23,217 @@ Table of Contents
           Floorplan: design_1
       Design limits: <entire design considered>
              Max violations: <unlimited>
-             Violations found: 66
+             Violations found: 106
 +-----------+----------+-------------------------------+------------+
 | Rule      | Severity | Description                   | Violations |
 +-----------+----------+-------------------------------+------------+
+| SYNTH-11  | Warning  | DSP output not registered     | 2          |
+| TIMING-16 | Warning  | Large setup violation         | 38         |
 | TIMING-18 | Warning  | Missing input or output delay | 66         |
 +-----------+----------+-------------------------------+------------+
 
 2. REPORT DETAILS
 -----------------
+SYNTH-11#1 Warning
+DSP output not registered  
+DSP instance fsmRUN/auto/alu/adder/sum0 is not fully pipelined on the output side. MREG/PREG are not used.
+Related violations: <none>
+
+SYNTH-11#2 Warning
+DSP output not registered  
+DSP instance fsmRUN/manual/alu/adder/sum0 is not fully pipelined on the output side. MREG/PREG are not used.
+Related violations: <none>
+
+TIMING-16#1 Warning
+Large setup violation  
+There is a large setup violation of -28.977 ns between fsmRUN/manual/M_first_q_reg[1]/C (clocked by clk_0) and fsmRUN/manual/M_n_q_reg[0]/D (clocked by clk_0). Large setup violations at the end of those stages might be difficult to fix during the post-placement implementation flow and could be the result of non-optimal XDC constraints or non-optimal design architecture
+Related violations: <none>
+
+TIMING-16#2 Warning
+Large setup violation  
+There is a large setup violation of -29.207 ns between fsmRUN/manual/M_first_q_reg[1]/C (clocked by clk_0) and fsmRUN/manual/M_result_q_reg[1]/D (clocked by clk_0). Large setup violations at the end of those stages might be difficult to fix during the post-placement implementation flow and could be the result of non-optimal XDC constraints or non-optimal design architecture
+Related violations: <none>
+
+TIMING-16#3 Warning
+Large setup violation  
+There is a large setup violation of -29.228 ns between fsmRUN/manual/M_first_q_reg[1]/C (clocked by clk_0) and fsmRUN/manual/M_result_q_reg[2]/D (clocked by clk_0). Large setup violations at the end of those stages might be difficult to fix during the post-placement implementation flow and could be the result of non-optimal XDC constraints or non-optimal design architecture
+Related violations: <none>
+
+TIMING-16#4 Warning
+Large setup violation  
+There is a large setup violation of -29.491 ns between fsmRUN/manual/M_first_q_reg[1]/C (clocked by clk_0) and fsmRUN/manual/M_result_q_reg[4]/D (clocked by clk_0). Large setup violations at the end of those stages might be difficult to fix during the post-placement implementation flow and could be the result of non-optimal XDC constraints or non-optimal design architecture
+Related violations: <none>
+
+TIMING-16#5 Warning
+Large setup violation  
+There is a large setup violation of -29.511 ns between fsmRUN/auto/M_first_q_reg[3]/C (clocked by clk_0) and fsmRUN/auto/M_result_q_reg[3]/D (clocked by clk_0). Large setup violations at the end of those stages might be difficult to fix during the post-placement implementation flow and could be the result of non-optimal XDC constraints or non-optimal design architecture
+Related violations: <none>
+
+TIMING-16#6 Warning
+Large setup violation  
+There is a large setup violation of -29.531 ns between fsmRUN/auto/M_first_q_reg[3]/C (clocked by clk_0) and fsmRUN/auto/M_result_q_reg[1]/D (clocked by clk_0). Large setup violations at the end of those stages might be difficult to fix during the post-placement implementation flow and could be the result of non-optimal XDC constraints or non-optimal design architecture
+Related violations: <none>
+
+TIMING-16#7 Warning
+Large setup violation  
+There is a large setup violation of -29.585 ns between fsmRUN/auto/M_first_q_reg[3]/C (clocked by clk_0) and fsmRUN/auto/M_n_q_reg[0]/D (clocked by clk_0). Large setup violations at the end of those stages might be difficult to fix during the post-placement implementation flow and could be the result of non-optimal XDC constraints or non-optimal design architecture
+Related violations: <none>
+
+TIMING-16#8 Warning
+Large setup violation  
+There is a large setup violation of -29.643 ns between fsmRUN/manual/M_first_q_reg[1]/C (clocked by clk_0) and fsmRUN/manual/M_result_q_reg[13]/D (clocked by clk_0). Large setup violations at the end of those stages might be difficult to fix during the post-placement implementation flow and could be the result of non-optimal XDC constraints or non-optimal design architecture
+Related violations: <none>
+
+TIMING-16#9 Warning
+Large setup violation  
+There is a large setup violation of -29.674 ns between fsmRUN/manual/M_first_q_reg[1]/C (clocked by clk_0) and fsmRUN/manual/M_v_q_reg[0]/D (clocked by clk_0). Large setup violations at the end of those stages might be difficult to fix during the post-placement implementation flow and could be the result of non-optimal XDC constraints or non-optimal design architecture
+Related violations: <none>
+
+TIMING-16#10 Warning
+Large setup violation  
+There is a large setup violation of -29.681 ns between fsmRUN/manual/M_first_q_reg[1]/C (clocked by clk_0) and fsmRUN/manual/M_result_q_reg[6]/D (clocked by clk_0). Large setup violations at the end of those stages might be difficult to fix during the post-placement implementation flow and could be the result of non-optimal XDC constraints or non-optimal design architecture
+Related violations: <none>
+
+TIMING-16#11 Warning
+Large setup violation  
+There is a large setup violation of -29.725 ns between fsmRUN/manual/M_first_q_reg[1]/C (clocked by clk_0) and fsmRUN/manual/M_result_q_reg[3]/D (clocked by clk_0). Large setup violations at the end of those stages might be difficult to fix during the post-placement implementation flow and could be the result of non-optimal XDC constraints or non-optimal design architecture
+Related violations: <none>
+
+TIMING-16#12 Warning
+Large setup violation  
+There is a large setup violation of -29.740 ns between fsmRUN/manual/M_first_q_reg[1]/C (clocked by clk_0) and fsmRUN/manual/M_result_q_reg[9]/D (clocked by clk_0). Large setup violations at the end of those stages might be difficult to fix during the post-placement implementation flow and could be the result of non-optimal XDC constraints or non-optimal design architecture
+Related violations: <none>
+
+TIMING-16#13 Warning
+Large setup violation  
+There is a large setup violation of -29.781 ns between fsmRUN/auto/M_first_q_reg[3]/C (clocked by clk_0) and fsmRUN/auto/M_result_q_reg[4]/D (clocked by clk_0). Large setup violations at the end of those stages might be difficult to fix during the post-placement implementation flow and could be the result of non-optimal XDC constraints or non-optimal design architecture
+Related violations: <none>
+
+TIMING-16#14 Warning
+Large setup violation  
+There is a large setup violation of -29.837 ns between fsmRUN/manual/M_first_q_reg[1]/C (clocked by clk_0) and fsmRUN/manual/M_result_q_reg[11]/D (clocked by clk_0). Large setup violations at the end of those stages might be difficult to fix during the post-placement implementation flow and could be the result of non-optimal XDC constraints or non-optimal design architecture
+Related violations: <none>
+
+TIMING-16#15 Warning
+Large setup violation  
+There is a large setup violation of -29.864 ns between fsmRUN/manual/M_first_q_reg[1]/C (clocked by clk_0) and fsmRUN/manual/M_result_q_reg[12]/D (clocked by clk_0). Large setup violations at the end of those stages might be difficult to fix during the post-placement implementation flow and could be the result of non-optimal XDC constraints or non-optimal design architecture
+Related violations: <none>
+
+TIMING-16#16 Warning
+Large setup violation  
+There is a large setup violation of -29.866 ns between fsmRUN/auto/M_first_q_reg[3]/C (clocked by clk_0) and fsmRUN/auto/M_result_q_reg[2]/D (clocked by clk_0). Large setup violations at the end of those stages might be difficult to fix during the post-placement implementation flow and could be the result of non-optimal XDC constraints or non-optimal design architecture
+Related violations: <none>
+
+TIMING-16#17 Warning
+Large setup violation  
+There is a large setup violation of -29.868 ns between fsmRUN/auto/M_first_q_reg[3]/C (clocked by clk_0) and fsmRUN/auto/M_result_q_reg[5]/D (clocked by clk_0). Large setup violations at the end of those stages might be difficult to fix during the post-placement implementation flow and could be the result of non-optimal XDC constraints or non-optimal design architecture
+Related violations: <none>
+
+TIMING-16#18 Warning
+Large setup violation  
+There is a large setup violation of -29.880 ns between fsmRUN/auto/M_first_q_reg[3]/C (clocked by clk_0) and fsmRUN/auto/M_v_q_reg[0]/D (clocked by clk_0). Large setup violations at the end of those stages might be difficult to fix during the post-placement implementation flow and could be the result of non-optimal XDC constraints or non-optimal design architecture
+Related violations: <none>
+
+TIMING-16#19 Warning
+Large setup violation  
+There is a large setup violation of -29.914 ns between fsmRUN/auto/M_first_q_reg[3]/C (clocked by clk_0) and fsmRUN/auto/M_result_q_reg[8]/D (clocked by clk_0). Large setup violations at the end of those stages might be difficult to fix during the post-placement implementation flow and could be the result of non-optimal XDC constraints or non-optimal design architecture
+Related violations: <none>
+
+TIMING-16#20 Warning
+Large setup violation  
+There is a large setup violation of -29.918 ns between fsmRUN/manual/M_first_q_reg[1]/C (clocked by clk_0) and fsmRUN/manual/M_result_q_reg[5]/D (clocked by clk_0). Large setup violations at the end of those stages might be difficult to fix during the post-placement implementation flow and could be the result of non-optimal XDC constraints or non-optimal design architecture
+Related violations: <none>
+
+TIMING-16#21 Warning
+Large setup violation  
+There is a large setup violation of -29.984 ns between fsmRUN/manual/M_first_q_reg[1]/C (clocked by clk_0) and fsmRUN/manual/M_result_q_reg[14]/D (clocked by clk_0). Large setup violations at the end of those stages might be difficult to fix during the post-placement implementation flow and could be the result of non-optimal XDC constraints or non-optimal design architecture
+Related violations: <none>
+
+TIMING-16#22 Warning
+Large setup violation  
+There is a large setup violation of -30.027 ns between fsmRUN/manual/M_first_q_reg[1]/C (clocked by clk_0) and fsmRUN/manual/M_result_q_reg[10]/D (clocked by clk_0). Large setup violations at the end of those stages might be difficult to fix during the post-placement implementation flow and could be the result of non-optimal XDC constraints or non-optimal design architecture
+Related violations: <none>
+
+TIMING-16#23 Warning
+Large setup violation  
+There is a large setup violation of -30.039 ns between fsmRUN/auto/M_first_q_reg[3]/C (clocked by clk_0) and fsmRUN/auto/M_result_q_reg[7]/D (clocked by clk_0). Large setup violations at the end of those stages might be difficult to fix during the post-placement implementation flow and could be the result of non-optimal XDC constraints or non-optimal design architecture
+Related violations: <none>
+
+TIMING-16#24 Warning
+Large setup violation  
+There is a large setup violation of -30.051 ns between fsmRUN/manual/M_first_q_reg[1]/C (clocked by clk_0) and fsmRUN/manual/M_result_q_reg[15]/D (clocked by clk_0). Large setup violations at the end of those stages might be difficult to fix during the post-placement implementation flow and could be the result of non-optimal XDC constraints or non-optimal design architecture
+Related violations: <none>
+
+TIMING-16#25 Warning
+Large setup violation  
+There is a large setup violation of -30.211 ns between fsmRUN/auto/M_first_q_reg[3]/C (clocked by clk_0) and fsmRUN/auto/M_result_q_reg[13]/D (clocked by clk_0). Large setup violations at the end of those stages might be difficult to fix during the post-placement implementation flow and could be the result of non-optimal XDC constraints or non-optimal design architecture
+Related violations: <none>
+
+TIMING-16#26 Warning
+Large setup violation  
+There is a large setup violation of -30.212 ns between fsmRUN/auto/M_first_q_reg[3]/C (clocked by clk_0) and fsmRUN/auto/M_result_q_reg[9]/D (clocked by clk_0). Large setup violations at the end of those stages might be difficult to fix during the post-placement implementation flow and could be the result of non-optimal XDC constraints or non-optimal design architecture
+Related violations: <none>
+
+TIMING-16#27 Warning
+Large setup violation  
+There is a large setup violation of -30.250 ns between fsmRUN/manual/M_first_q_reg[1]/C (clocked by clk_0) and fsmRUN/manual/M_result_q_reg[7]/D (clocked by clk_0). Large setup violations at the end of those stages might be difficult to fix during the post-placement implementation flow and could be the result of non-optimal XDC constraints or non-optimal design architecture
+Related violations: <none>
+
+TIMING-16#28 Warning
+Large setup violation  
+There is a large setup violation of -30.267 ns between fsmRUN/manual/M_first_q_reg[1]/C (clocked by clk_0) and fsmRUN/manual/M_result_q_reg[8]/D (clocked by clk_0). Large setup violations at the end of those stages might be difficult to fix during the post-placement implementation flow and could be the result of non-optimal XDC constraints or non-optimal design architecture
+Related violations: <none>
+
+TIMING-16#29 Warning
+Large setup violation  
+There is a large setup violation of -30.276 ns between fsmRUN/auto/M_first_q_reg[3]/C (clocked by clk_0) and fsmRUN/auto/M_result_q_reg[15]/D (clocked by clk_0). Large setup violations at the end of those stages might be difficult to fix during the post-placement implementation flow and could be the result of non-optimal XDC constraints or non-optimal design architecture
+Related violations: <none>
+
+TIMING-16#30 Warning
+Large setup violation  
+There is a large setup violation of -30.294 ns between fsmRUN/auto/M_first_q_reg[3]/C (clocked by clk_0) and fsmRUN/auto/M_result_q_reg[11]/D (clocked by clk_0). Large setup violations at the end of those stages might be difficult to fix during the post-placement implementation flow and could be the result of non-optimal XDC constraints or non-optimal design architecture
+Related violations: <none>
+
+TIMING-16#31 Warning
+Large setup violation  
+There is a large setup violation of -30.308 ns between fsmRUN/auto/M_first_q_reg[3]/C (clocked by clk_0) and fsmRUN/auto/M_result_q_reg[6]/D (clocked by clk_0). Large setup violations at the end of those stages might be difficult to fix during the post-placement implementation flow and could be the result of non-optimal XDC constraints or non-optimal design architecture
+Related violations: <none>
+
+TIMING-16#32 Warning
+Large setup violation  
+There is a large setup violation of -30.434 ns between fsmRUN/auto/M_first_q_reg[3]/C (clocked by clk_0) and fsmRUN/auto/M_result_q_reg[12]/D (clocked by clk_0). Large setup violations at the end of those stages might be difficult to fix during the post-placement implementation flow and could be the result of non-optimal XDC constraints or non-optimal design architecture
+Related violations: <none>
+
+TIMING-16#33 Warning
+Large setup violation  
+There is a large setup violation of -30.440 ns between fsmRUN/auto/M_first_q_reg[3]/C (clocked by clk_0) and fsmRUN/auto/M_result_q_reg[14]/D (clocked by clk_0). Large setup violations at the end of those stages might be difficult to fix during the post-placement implementation flow and could be the result of non-optimal XDC constraints or non-optimal design architecture
+Related violations: <none>
+
+TIMING-16#34 Warning
+Large setup violation  
+There is a large setup violation of -30.549 ns between fsmRUN/manual/M_first_q_reg[1]/C (clocked by clk_0) and fsmRUN/manual/M_result_q_reg[0]/D (clocked by clk_0). Large setup violations at the end of those stages might be difficult to fix during the post-placement implementation flow and could be the result of non-optimal XDC constraints or non-optimal design architecture
+Related violations: <none>
+
+TIMING-16#35 Warning
+Large setup violation  
+There is a large setup violation of -30.623 ns between fsmRUN/auto/M_first_q_reg[3]/C (clocked by clk_0) and fsmRUN/auto/M_result_q_reg[10]/D (clocked by clk_0). Large setup violations at the end of those stages might be difficult to fix during the post-placement implementation flow and could be the result of non-optimal XDC constraints or non-optimal design architecture
+Related violations: <none>
+
+TIMING-16#36 Warning
+Large setup violation  
+There is a large setup violation of -30.662 ns between fsmRUN/manual/M_first_q_reg[1]/C (clocked by clk_0) and fsmRUN/manual/M_z_q_reg[0]/D (clocked by clk_0). Large setup violations at the end of those stages might be difficult to fix during the post-placement implementation flow and could be the result of non-optimal XDC constraints or non-optimal design architecture
+Related violations: <none>
+
+TIMING-16#37 Warning
+Large setup violation  
+There is a large setup violation of -30.715 ns between fsmRUN/auto/M_first_q_reg[3]/C (clocked by clk_0) and fsmRUN/auto/M_result_q_reg[0]/D (clocked by clk_0). Large setup violations at the end of those stages might be difficult to fix during the post-placement implementation flow and could be the result of non-optimal XDC constraints or non-optimal design architecture
+Related violations: <none>
+
+TIMING-16#38 Warning
+Large setup violation  
+There is a large setup violation of -30.762 ns between fsmRUN/auto/M_first_q_reg[3]/C (clocked by clk_0) and fsmRUN/auto/M_z_q_reg[0]/D (clocked by clk_0). Large setup violations at the end of those stages might be difficult to fix during the post-placement implementation flow and could be the result of non-optimal XDC constraints or non-optimal design architecture
+Related violations: <none>
+
 TIMING-18#1 Warning
 Missing input or output delay  
 An input delay is missing on io_button[0] relative to clock(s) clk_0

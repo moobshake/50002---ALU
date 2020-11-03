@@ -49,7 +49,7 @@ module fsm_COMBINE_4 (
   );
   reg [15:0] M_show_d, M_show_q = 1'h0;
   reg [31:0] M_display_d, M_display_q = 1'h0;
-  reg [5:0] M_opcode_d, M_opcode_q = 1'h0;
+  reg [5:0] M_aluFN_d, M_aluFN_q = 1'h0;
   localparam MANUAL_brain = 1'd0;
   localparam AUTO_brain = 1'd1;
   
@@ -59,7 +59,7 @@ module fsm_COMBINE_4 (
     M_brain_d = M_brain_q;
     M_display_d = M_display_q;
     M_show_d = M_show_q;
-    M_opcode_d = M_opcode_q;
+    M_aluFN_d = M_aluFN_q;
     
     M_manual_button = button;
     M_manual_in = in;
@@ -67,7 +67,7 @@ module fsm_COMBINE_4 (
     M_auto_in = in;
     aluOut = M_show_q;
     displayOUT = M_display_q;
-    opOUT = M_opcode_q;
+    opOUT = M_aluFN_q;
     inputMode = M_auto_inputMode;
     
     case (M_brain_q)
@@ -78,7 +78,7 @@ module fsm_COMBINE_4 (
         end else begin
           M_show_d = M_manual_aluOut;
           M_display_d = M_manual_displayOUT;
-          M_opcode_d = M_manual_opOUT;
+          M_aluFN_d = M_manual_opOUT;
         end
       end
       AUTO_brain: begin
@@ -88,7 +88,7 @@ module fsm_COMBINE_4 (
         end else begin
           M_show_d = M_auto_aluOut;
           M_display_d = M_auto_displayOUT;
-          M_opcode_d = M_auto_opOUT;
+          M_aluFN_d = M_auto_opOUT;
         end
       end
     endcase
@@ -100,11 +100,11 @@ module fsm_COMBINE_4 (
     if (rst == 1'b1) begin
       M_show_q <= 1'h0;
       M_display_q <= 1'h0;
-      M_opcode_q <= 1'h0;
+      M_aluFN_q <= 1'h0;
     end else begin
       M_show_q <= M_show_d;
       M_display_q <= M_display_d;
-      M_opcode_q <= M_opcode_d;
+      M_aluFN_q <= M_aluFN_d;
     end
   end
   

@@ -5,7 +5,7 @@
 */
 
 module adder16bit_14 (
-    input alufn0,
+    input [3:0] alufn,
     input [15:0] a,
     input [15:0] b,
     output reg [15:0] out,
@@ -20,12 +20,29 @@ module adder16bit_14 (
   
   reg [15:0] xb;
   
+  reg [1:0] code;
+  
   always @* begin
-    if (alufn0 == 1'h0) begin
-      sum = $signed(a) + $signed(b);
-    end else begin
-      sum = $signed(a) - $signed(b);
-    end
+    code[0+0-:1] = alufn[0+0-:1];
+    code[1+0-:1] = alufn[3+0-:1];
+    
+    case (code)
+      2'h0: begin
+        sum = $signed(a) + $signed(b);
+      end
+      2'h1: begin
+        sum = $signed(a) - $signed(b);
+      end
+      2'h2: begin
+        sum = $signed(a) * $signed(b);
+      end
+      2'h3: begin
+        sum = $signed(a) / $signed(b);
+      end
+      default: begin
+        sum = 1'h0;
+      end
+    endcase
     if (sum == 1'h0) begin
       z = 1'h1;
     end else begin
@@ -33,7 +50,7 @@ module adder16bit_14 (
     end
     n = sum[15+0-:1];
     out = sum;
-    xb = b ^ alufn0;
-    v = a[15+0-:1] & xb[15+0-:1] & ~sum[15+0-:1] + ~a[15+0-:1] & ~xb[15+0-:1] & sum[15+0-:1];
+    xb = b ^ alufn[0+0-:1];
+    v = (a[15+0-:1] & xb[15+0-:1] & ~sum[15+0-:1]) + (~a[15+0-:1] & ~xb[15+0-:1] & sum[15+0-:1]);
   end
 endmodule

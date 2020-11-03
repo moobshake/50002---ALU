@@ -17,13 +17,13 @@ module shifter16bit_15 (
     
     case (alufn10)
       2'h0: begin
-        out = a << b[0+4-:5];
+        out = a << b[0+3-:4];
       end
       2'h1: begin
-        out = a >> b[0+4-:5];
+        out = a >> b[0+3-:4];
       end
       2'h3: begin
-        out = a >>> b[0+4-:5];
+        out = $signed(a) >>> b[0+3-:4];
       end
       default: begin
         out = a;

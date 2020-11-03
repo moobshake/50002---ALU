@@ -17,7 +17,7 @@ module alu16bit (
     out = 0;
     
     // adder unit, will always add/sub the two inputs
-    adder.alufn0 = alufn[0];
+    adder.alufn = alufn[3:0];
     adder.a = a;
     adder.b = b;
     z = adder.z;

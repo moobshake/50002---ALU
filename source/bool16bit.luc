@@ -10,13 +10,13 @@ module bool16bit (
   always {
     out = 0;
     
-    // storing all the inputs into test case
+    // combining the two inputs for bitwise operation in the next for loop
     for (i=0; i<16; i++){
         selector[i][1] = b[i];
         selector[i][0] = a[i]; 
     }
     
-    // check for the different operations
+    // according to the truth table, assign the different values of the bitwise operations
     for (i=0; i<16; i++){
         case (selector[i]){
           b00: out[i] = alufn30[0];

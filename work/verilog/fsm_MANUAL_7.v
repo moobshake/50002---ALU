@@ -18,7 +18,7 @@ module fsm_MANUAL_7 (
   
   reg [15:0] M_first_d, M_first_q = 1'h0;
   reg [15:0] M_second_d, M_second_q = 1'h0;
-  reg [5:0] M_opcode_d, M_opcode_q = 1'h0;
+  reg [5:0] M_aluFN_d, M_aluFN_q = 1'h0;
   reg [15:0] M_result_d, M_result_q = 1'h0;
   reg [0:0] M_z_d, M_z_q = 1'h0;
   reg [0:0] M_v_d, M_v_q = 1'h0;
@@ -26,7 +26,7 @@ module fsm_MANUAL_7 (
   reg [31:0] M_display_d, M_display_q = 1'h0;
   localparam FIRSTINPUT_brain = 3'd0;
   localparam SECONDINPUT_brain = 3'd1;
-  localparam OPCODE_brain = 3'd2;
+  localparam ALUFN_brain = 3'd2;
   localparam RESULT_brain = 3'd3;
   localparam AUTO_brain = 3'd4;
   localparam ILLEGAL_brain = 3'd5;
@@ -54,11 +54,21 @@ module fsm_MANUAL_7 (
   
   localparam SUBOP = 6'h01;
   
+  localparam MULOP = 6'h08;
+  
+  localparam DIVOP = 6'h09;
+  
   localparam ANDOP = 6'h18;
+  
+  localparam NANDOP = 6'h17;
   
   localparam OROP = 6'h1e;
   
+  localparam NOROP = 6'h11;
+  
   localparam XOROP = 6'h16;
+  
+  localparam XNOROP = 6'h19;
   
   localparam ALDROP = 6'h1a;
   
@@ -67,6 +77,8 @@ module fsm_MANUAL_7 (
   localparam SHROP = 6'h21;
   
   localparam SRAOP = 6'h23;
+  
+  localparam SLAOP = 6'h22;
   
   localparam CMPEQOP = 6'h33;
   
@@ -80,20 +92,20 @@ module fsm_MANUAL_7 (
     M_v_d = M_v_q;
     M_display_d = M_display_q;
     M_z_d = M_z_q;
-    M_opcode_d = M_opcode_q;
+    M_aluFN_d = M_aluFN_q;
     M_n_d = M_n_q;
     M_first_d = M_first_q;
     M_second_d = M_second_q;
     
     M_alu_a = M_first_q;
     M_alu_b = M_second_q;
-    M_alu_alufn = M_opcode_q;
+    M_alu_alufn = M_aluFN_q;
     aluOut = M_result_q;
     M_z_d = M_alu_z;
     M_v_d = M_alu_v;
     M_n_d = M_alu_n;
     displayOUT = M_display_q;
-    opOUT = M_opcode_q;
+    opOUT = M_aluFN_q;
     
     case (M_brain_q)
       AUTO_brain: begin
@@ -112,7 +124,7 @@ module fsm_MANUAL_7 (
           if (button[0+0-:1]) begin
             M_first_d[0+15-:16] = 1'h0;
             M_second_d[0+15-:16] = 1'h0;
-            M_opcode_d[0+5-:6] = 1'h0;
+            M_aluFN_d[0+5-:6] = 1'h0;
             M_z_d = 1'h0;
             M_v_d = 1'h0;
             M_n_d = 1'h0;
@@ -129,12 +141,12 @@ module fsm_MANUAL_7 (
         if (button[1+0-:1]) begin
           M_second_d[0+7-:8] = in[0+7-:8];
           M_second_d[8+7-:8] = in[8+7-:8];
-          M_brain_d = OPCODE_brain;
+          M_brain_d = ALUFN_brain;
         end else begin
           if (button[0+0-:1]) begin
             M_first_d[0+15-:16] = 1'h0;
             M_second_d[0+15-:16] = 1'h0;
-            M_opcode_d[0+5-:6] = 1'h0;
+            M_aluFN_d[0+5-:6] = 1'h0;
             M_z_d = 1'h0;
             M_v_d = 1'h0;
             M_n_d = 1'h0;
@@ -147,10 +159,14 @@ module fsm_MANUAL_7 (
           end
         end
       end
-      OPCODE_brain: begin
+      ALUFN_brain: begin
         if (button[1+0-:1]) begin
-          if (M_opcode_q == 6'h00 || M_opcode_q == 6'h01 || M_opcode_q == 6'h18 || M_opcode_q == 6'h1e || M_opcode_q == 6'h16 || M_opcode_q == 6'h1a || M_opcode_q == 6'h20 || M_opcode_q == 6'h21 || M_opcode_q == 6'h23 || M_opcode_q == 6'h33 || M_opcode_q == 6'h35 || M_opcode_q == 6'h37) begin
-            M_brain_d = RESULT_brain;
+          if (M_aluFN_q == 6'h00 || M_aluFN_q == 6'h01 || M_aluFN_q == 6'h08 || M_aluFN_q == 6'h09 || M_aluFN_q == 6'h18 || M_aluFN_q == 6'h17 || M_aluFN_q == 6'h1e || M_aluFN_q == 6'h11 || M_aluFN_q == 6'h16 || M_aluFN_q == 6'h19 || M_aluFN_q == 6'h1a || M_aluFN_q == 6'h20 || M_aluFN_q == 6'h21 || M_aluFN_q == 6'h23 || M_aluFN_q == 6'h22 || M_aluFN_q == 6'h33 || M_aluFN_q == 6'h35 || M_aluFN_q == 6'h37) begin
+            if (M_aluFN_q == 6'h09 && M_second_q == 1'h0) begin
+              M_brain_d = ILLEGAL_brain;
+            end else begin
+              M_brain_d = RESULT_brain;
+            end
           end else begin
             M_brain_d = ILLEGAL_brain;
           end
@@ -158,7 +174,7 @@ module fsm_MANUAL_7 (
           if (button[0+0-:1]) begin
             M_first_d[0+15-:16] = 1'h0;
             M_second_d[0+15-:16] = 1'h0;
-            M_opcode_d[0+5-:6] = 1'h0;
+            M_aluFN_d[0+5-:6] = 1'h0;
             M_z_d = 1'h0;
             M_v_d = 1'h0;
             M_n_d = 1'h0;
@@ -166,20 +182,24 @@ module fsm_MANUAL_7 (
           end else begin
             M_result_d[0+7-:8] = 1'h0;
             M_result_d[8+7-:8] = 1'h0;
-            M_opcode_d = in[16+0+5-:6];
+            M_aluFN_d = in[16+0+5-:6];
             M_display_d = 32'h03aa000a;
-            M_brain_d = OPCODE_brain;
+            M_brain_d = ALUFN_brain;
           end
         end
       end
       ILLEGAL_brain: begin
         if (button[1+0-:1]) begin
-          M_brain_d = OPCODE_brain;
+          if (M_aluFN_q == 6'h09 && M_second_q == 1'h0) begin
+            M_brain_d = SECONDINPUT_brain;
+          end else begin
+            M_brain_d = ALUFN_brain;
+          end
         end else begin
           if (button[0+0-:1]) begin
             M_first_d[0+15-:16] = 1'h0;
             M_second_d[0+15-:16] = 1'h0;
-            M_opcode_d[0+5-:6] = 1'h0;
+            M_aluFN_d[0+5-:6] = 1'h0;
             M_z_d = 1'h0;
             M_v_d = 1'h0;
             M_n_d = 1'h0;
@@ -194,7 +214,7 @@ module fsm_MANUAL_7 (
         if (button[1+0-:1]) begin
           M_first_d[0+15-:16] = 1'h0;
           M_second_d[0+15-:16] = 1'h0;
-          M_opcode_d[0+5-:6] = 1'h0;
+          M_aluFN_d[0+5-:6] = 1'h0;
           M_z_d = 1'h0;
           M_v_d = 1'h0;
           M_n_d = 1'h0;
@@ -203,7 +223,7 @@ module fsm_MANUAL_7 (
           if (button[0+0-:1]) begin
             M_first_d[0+15-:16] = 1'h0;
             M_second_d[0+15-:16] = 1'h0;
-            M_opcode_d[0+5-:6] = 1'h0;
+            M_aluFN_d[0+5-:6] = 1'h0;
             M_z_d = 1'h0;
             M_v_d = 1'h0;
             M_n_d = 1'h0;
@@ -227,7 +247,7 @@ module fsm_MANUAL_7 (
     if (rst == 1'b1) begin
       M_first_q <= 1'h0;
       M_second_q <= 1'h0;
-      M_opcode_q <= 1'h0;
+      M_aluFN_q <= 1'h0;
       M_result_q <= 1'h0;
       M_z_q <= 1'h0;
       M_v_q <= 1'h0;
@@ -236,7 +256,7 @@ module fsm_MANUAL_7 (
     end else begin
       M_first_q <= M_first_d;
       M_second_q <= M_second_d;
-      M_opcode_q <= M_opcode_d;
+      M_aluFN_q <= M_aluFN_d;
       M_result_q <= M_result_d;
       M_z_q <= M_z_d;
       M_v_q <= M_v_d;

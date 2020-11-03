@@ -5,35 +5,41 @@ module fsm_MANUAL (
     input in [3][8], // get the input from the dip switch
     output aluOut[16], // alu output. to be shown in the io_leds
     output displayOUT[4][8], // seven segment display output
-    output opOUT[6] // display what opcode it is running currently
+    output opOUT[6] // display what aluFN it is running currently
   ) {
   
   .clk(clk){
     .rst(rst) {
       dff first[16](#INIT(0)); // store 16 bit input a
       dff second[16](#INIT(0)); // store 16 bit input b
-      dff opcode[6](#INIT(0)); // store 6 bit opcode
+      dff aluFN[6](#INIT(0)); // store 6 bit aluFN
       dff result[16](#INIT(0)); // store 16 bit for output on led
       dff z[1](#INIT(0)); // store 1 bit z
       dff v[1](#INIT(0)); // store 1 bit v
       dff n[1](#INIT(0)); // store 1 bit n
       dff display[4][8]; // store what to display on 7 segment displays
     }
-    fsm brain = {FIRSTINPUT, SECONDINPUT, OPCODE, RESULT, AUTO, ILLEGAL}; // main fsm to get user inputs and display results
+    fsm brain = {FIRSTINPUT, SECONDINPUT, ALUFN, RESULT, AUTO, ILLEGAL}; // main fsm to get user inputs and display results
   }
   
   alu16bit alu; // call the alu.luc
   
-  // store all the opcodes to check if there is an illegal opcode when user input
+  // store all the aluFNs to check if there is an illegal aluFN when user input
   const ADDOP = 6b000000;
   const SUBOP = 6b000001;
+  const MULOP = 6b001000;
+  const DIVOP = 6b001001;
   const ANDOP = 6b011000;
+  const NANDOP = 6b010111;
   const OROP = 6b011110;
+  const NOROP = 6b010001;
   const XOROP = 6b010110;
+  const XNOROP = 6b011001;
   const ALDROP = 6b011010;
   const SHLOP = 6b100000;
   const SHROP = 6b100001;
   const SRAOP = 6b100011;
+  const SLAOP = 6b100010;
   const CMPEQOP = 6b110011;
   const CMPLTOP = 6b110101;
   const CMPLEOP = 6b110111;
@@ -42,13 +48,13 @@ module fsm_MANUAL (
     // the standard output of all the DFF and what to display to the combine fsm
     alu.a = first.q;
     alu.b = second.q;
-    alu.alufn = opcode.q;
+    alu.alufn = aluFN.q;
     aluOut = result.q;
     z.d = alu.z;
     v.d = alu.v;
     n.d = alu.n;
     displayOUT = display.q;
-    opOUT = opcode.q;
+    opOUT = aluFN.q;
     
     case (brain.q) {
       // when in auto mode ************************************
@@ -66,7 +72,7 @@ module fsm_MANUAL (
           // reset output
           first.d[15:0] = 0;
           second.d[15:0] = 0;
-          opcode.d[5:0] = 0;
+          aluFN.d[5:0] = 0;
           z.d = 0;
           v.d = 0;
           n.d = 0;
@@ -83,13 +89,13 @@ module fsm_MANUAL (
         if (button[1]) {
           second.d[7:0] = in[0]; // store in second dff
           second.d[15:8] = in[1];
-          brain.d = brain.OPCODE;
+          brain.d = brain.ALUFN;
         }
         else if (button[0]) { // if change to AUTO_MODE
           // reset output
           first.d[15:0] = 0;
           second.d[15:0] = 0;
-          opcode.d[5:0] = 0;
+          aluFN.d[5:0] = 0;
           z.d = 0;
           v.d = 0;
           n.d = 0;
@@ -102,12 +108,18 @@ module fsm_MANUAL (
           brain.d = brain.SECONDINPUT;
         }
         
-      // get opcode from user ***************************
-      brain.OPCODE:
+      // get aluFN from user ***************************
+      brain.ALUFN:
         if (button[1]) {
-          // check for illegal opcode --------------------------------------------------------- 
-          if (opcode.q == ADDOP || opcode.q == SUBOP || opcode.q == ANDOP || opcode.q == OROP || opcode.q == XOROP || opcode.q == ALDROP || opcode.q == SHLOP || opcode.q == SHROP || opcode.q == SRAOP || opcode.q == CMPEQOP || opcode.q == CMPLTOP || opcode.q == CMPLEOP) {
-            brain.d = brain.RESULT;
+          // check for illegal aluFN --------------------------------------------------------- 
+          if (aluFN.q == ADDOP || aluFN.q == SUBOP || aluFN.q == MULOP || aluFN.q == DIVOP || aluFN.q == ANDOP || aluFN.q == NANDOP || \
+            aluFN.q == OROP || aluFN.q == NOROP || aluFN.q == XOROP || aluFN.q == XNOROP || aluFN.q == ALDROP || aluFN.q == SHLOP || \
+            aluFN.q == SHROP || aluFN.q == SRAOP || aluFN.q == SLAOP || aluFN.q == CMPEQOP || aluFN.q == CMPLTOP || aluFN.q == CMPLEOP) {
+            if (aluFN.q == DIVOP && second.q == 0) { // divide by 0, thus go to illegal operation
+              brain.d = brain.ILLEGAL;
+            } else {
+              brain.d = brain.RESULT;
+            }
           }
           else {brain.d = brain.ILLEGAL;}
         }
@@ -115,7 +127,7 @@ module fsm_MANUAL (
           // reset output
           first.d[15:0] = 0;
           second.d[15:0] = 0;
-          opcode.d[5:0] = 0;
+          aluFN.d[5:0] = 0;
           z.d = 0;
           v.d = 0;
           n.d = 0;
@@ -124,21 +136,25 @@ module fsm_MANUAL (
         else {
           result.d[7:0] = 0; // dip switch bank 0: first 8 bits
           result.d[15:8] = 0; // dip switch bank 1: second 8 bits
-          opcode.d = in[2][5:0]; // store the opcode
+          aluFN.d = in[2][5:0]; // store the aluFN
           display.d = {8h3, 8haa, 8h0, 8ha}; // '3_op'
-          brain.d = brain.OPCODE;
+          brain.d = brain.ALUFN;
         }
         
-      // if illegal opcode ***********************************
+      // if illegal aluFN or dvision by 0 ***********************************
       brain.ILLEGAL:
-        if (button[1]) { // back to opcode mode to get another opcode
-          brain.d = brain.OPCODE;
+        if (button[1]) { // back to aluFN mode to get another aluFN
+          if (aluFN.q == DIVOP && second.q == 0) { // if divide by 0, get another input
+            brain.d = brain.SECONDINPUT;
+          } else {
+            brain.d = brain.ALUFN;
+          }
         }
         else if (button[0]) { // if change to AUTO_MODE
           // reset output
           first.d[15:0] = 0;
           second.d[15:0] = 0;
-          opcode.d[5:0] = 0;
+          aluFN.d[5:0] = 0;
           z.d = 0;
           v.d = 0;
           n.d = 0;
@@ -154,7 +170,7 @@ module fsm_MANUAL (
         if (button[1]) { // reset manual mode
           first.d[15:0] = 0;
           second.d[15:0] = 0;
-          opcode.d[5:0] = 0;
+          aluFN.d[5:0] = 0;
           z.d = 0;
           v.d = 0;
           n.d = 0;
@@ -164,7 +180,7 @@ module fsm_MANUAL (
           // reset output
           first.d[15:0] = 0;
           second.d[15:0] = 0;
-          opcode.d[5:0] = 0;
+          aluFN.d[5:0] = 0;
           z.d = 0;
           v.d = 0;
           n.d = 0;

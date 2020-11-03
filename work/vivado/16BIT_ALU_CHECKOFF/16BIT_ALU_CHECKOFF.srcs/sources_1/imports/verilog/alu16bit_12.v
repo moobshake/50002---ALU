@@ -20,11 +20,11 @@ module alu16bit_12 (
   wire [1-1:0] M_adder_z;
   wire [1-1:0] M_adder_v;
   wire [1-1:0] M_adder_n;
-  reg [1-1:0] M_adder_alufn0;
+  reg [4-1:0] M_adder_alufn;
   reg [16-1:0] M_adder_a;
   reg [16-1:0] M_adder_b;
   adder16bit_14 adder (
-    .alufn0(M_adder_alufn0),
+    .alufn(M_adder_alufn),
     .a(M_adder_a),
     .b(M_adder_b),
     .out(M_adder_out),
@@ -70,7 +70,7 @@ module alu16bit_12 (
   
   always @* begin
     out = 1'h0;
-    M_adder_alufn0 = alufn[0+0-:1];
+    M_adder_alufn = alufn[0+3-:4];
     M_adder_a = a;
     M_adder_b = b;
     z = M_adder_z;

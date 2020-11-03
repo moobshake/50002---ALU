@@ -14,23 +14,23 @@
 module counter_13 (
     input clk,
     input rst,
-    output reg [27:0] value
+    output reg [28:0] value
   );
   
-  localparam SIZE = 5'h1c;
+  localparam SIZE = 5'h1d;
   localparam DIV = 1'h0;
   localparam TOP = 1'h0;
   localparam UP = 1'h1;
   
   
-  reg [27:0] M_ctr_d, M_ctr_q = 1'h0;
+  reg [28:0] M_ctr_d, M_ctr_q = 1'h0;
   
   localparam MAX_VALUE = 1'h0;
   
   always @* begin
     M_ctr_d = M_ctr_q;
     
-    value = M_ctr_q[0+27-:28];
+    value = M_ctr_q[0+28-:29];
     if (1'h1) begin
       M_ctr_d = M_ctr_q + 1'h1;
       if (1'h0 && M_ctr_q == 1'h0) begin
